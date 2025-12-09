@@ -1,0 +1,120 @@
+name: Package and Release Skill
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  package-and-release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Get version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF#refs/tags/}"
+          fi
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+      
+      - name: Validate skill structure
+        run: |
+          echo "Validating skill structure..."
+          
+          # Check SKILL.md exists
+          if [ ! -f "SKILL.md" ]; then
+            echo "ERROR: SKILL.md not found"
+            exit 1
+          fi
+          
+          # Check frontmatter
+          if ! head -1 SKILL.md | grep -q "^---"; then
+            echo "ERROR: SKILL.md must start with YAML frontmatter (---)"
+            exit 1
+          fi
+          
+          # Check name field
+          if ! grep -q "^name:" SKILL.md; then
+            echo "ERROR: SKILL.md frontmatter must contain 'name:' field"
+            exit 1
+          fi
+          
+          # Check description field
+          if ! grep -q "^description:" SKILL.md; then
+            echo "ERROR: SKILL.md frontmatter must contain 'description:' field"
+            exit 1
+          fi
+          
+          echo "Skill structure validated successfully"
+      
+      - name: Package skill
+        run: |
+          SKILL_NAME="webling-api"
+          OUTPUT_FILE="${SKILL_NAME}.skill"
+          
+          echo "Packaging skill as $OUTPUT_FILE..."
+          
+          # Create zip with .skill extension
+          # Exclude hidden files and directories except .github if needed
+          zip -r "$OUTPUT_FILE" . \
+            -x "*.git*" \
+            -x "*.github*" \
+            -x "*.DS_Store" \
+            -x "__MACOSX/*" \
+            -x "*.skill"
+          
+          echo "Package created: $OUTPUT_FILE"
+          ls -la "$OUTPUT_FILE"
+      
+      - name: Generate release notes
+        id: notes
+        run: |
+          cat << 'EOF' > release_notes.md
+          ## Webling API Skill
+          
+          This skill provides comprehensive guidance for interacting with the Webling API.
+          
+          ### Included References
+          - **members.md** - Member and membergroup endpoints
+          - **finance.md** - Debitors, entries, accounts, periods, costcenters
+          - **documents.md** - Documents and documentgroups (folders)
+          - **articles.md** - Articles and articlegroups
+          - **admin.md** - Users, usergroups, API keys
+          - **core.md** - Config, definitions, quota, settings, generic object endpoint
+          - **letters.md** - Letters and letter PDFs
+          - **replication.md** - Change tracking and sync
+          - **query-language.md** - Complete query language reference
+          
+          ### Installation
+          Upload the `.skill` file to your Claude environment.
+          
+          ### Usage
+          The skill automatically triggers when working with Webling API operations.
+          EOF
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Webling API Skill ${{ steps.version.outputs.version }}
+          tag_name: ${{ steps.version.outputs.version }}
+          body_path: release_notes.md
+          files: webling-api.skill
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
