@@ -1,0 +1,68 @@
+<section id="debitorcategory" class="resource-group"><h2 class="group-heading">Debitorcategory <a href="#debitorcategory" class="permalink">&para;</a></h2><p>Debitorcategories can be used to categorize <a href="#debitor">debitors</a>. Debitors can be linked to a debitorcategory.
+Debitorcategories are children of a periodgroup and can be used in all child periods of that periodgroup.</p>
+<div id="debitorcategory-debitorcategory-list" class="resource"><h3 class="resource-heading">Debitorcategory List <a href="#debitorcategory-debitorcategory-list" class="permalink">&nbsp;&para;</a></h3><div id="debitorcategory-debitorcategory-list-get" class="action get"><h4 class="action-heading"><div class="name">Get Debitorcategory List</div><a href="#debitorcategory-debitorcategory-list-get" class="method get">GET</a><code class="uri">/debitorcategory{?filter,order,format}</code></h4><p>Lists all available debitorcategory IDs.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/debitorcategory?<span class="hljs-attribute">filter=</span><span class="hljs-literal"></span>&<span class="hljs-attribute">order=</span><span class="hljs-literal">title ASC</span>&<span class="hljs-attribute">format=</span><span class="hljs-literal"></span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>filter</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter the list using the <a href="#header-query-language">Query Language</a></p>
+</dd><dt>order</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>title ASC</span></span><p>Sort the debitorcategory list by property and direction</p>
+</dd><dt>format</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Specify <code>format=full</code> to get the full object instead of a list of IDs</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">objects</span>": <span class="hljs-value">[
+    <span class="hljs-number">1098</span>,
+    <span class="hljs-number">1864</span>
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div><div id="debitorcategory-debitorcategory-list-post" class="action post"><h4 class="action-heading"><div class="name">Create Debitorcategory</div><a href="#debitorcategory-debitorcategory-list-post" class="method post">POST</a><code class="uri">/debitorcategory</code></h4><p>Create a debitorcategory</p>
+<p>Returns the id of the newly created debitorcategory.</p>
+<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname"></span>/debitorcategory</span></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>JSON Representation of the Debitorcategory.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"debitorcategory"</span></span>,
+  "<span class="hljs-attribute">readonly</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"Materialbezug"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">children</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">debitor</span>": <span class="hljs-value">[
+      <span class="hljs-number">2291</span>
+    ]
+  </span>}</span>,
+  "<span class="hljs-attribute">parents</span>": <span class="hljs-value">[
+    <span class="hljs-number">800</span>
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>201</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Body</h5><pre><code>1809</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="debitorcategory-debitorcategory" class="resource"><h3 class="resource-heading">Debitorcategory <a href="#debitorcategory-debitorcategory" class="permalink">&nbsp;&para;</a></h3><div id="debitorcategory-debitorcategory-get" class="action get"><h4 class="action-heading"><div class="name">Get Debitorcategory</div><a href="#debitorcategory-debitorcategory-get" class="method get">GET</a><code class="uri">/debitorcategory/{id}</code></h4><p>Get a debitorcategory</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/debitorcategory/<span class="hljs-attribute" title="id">1099</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1099</span></span><p>Debitorcategory ID</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>JSON Representation of the Debitorcategory.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"debitorcategory"</span></span>,
+  "<span class="hljs-attribute">readonly</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"Materialbezug"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">children</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">debitor</span>": <span class="hljs-value">[
+      <span class="hljs-number">2291</span>
+    ]
+  </span>}</span>,
+  "<span class="hljs-attribute">parents</span>": <span class="hljs-value">[
+    <span class="hljs-number">800</span>
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div><div id="debitorcategory-debitorcategory-put" class="action put"><h4 class="action-heading"><div class="name">Update Debitorcategory</div><a href="#debitorcategory-debitorcategory-put" class="method put">PUT</a><code class="uri">/debitorcategory/{id}</code></h4><p>Update a debitorcategory</p>
+<h4>Example URI</h4><div class="definition"><span class="method put">PUT</span>&nbsp;<span class="uri"><span class="hostname"></span>/debitorcategory/<span class="hljs-attribute" title="id">1099</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1099</span></span><p>Debitorcategory ID</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>JSON Representation of the Debitorcategory.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"debitorcategory"</span></span>,
+  "<span class="hljs-attribute">readonly</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"Materialbezug"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">children</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">debitor</span>": <span class="hljs-value">[
+      <span class="hljs-number">2291</span>
+    ]
+  </span>}</span>,
+  "<span class="hljs-attribute">parents</span>": <span class="hljs-value">[
+    <span class="hljs-number">800</span>
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>204</code></strong></div></div><div id="debitorcategory-debitorcategory-delete" class="action delete"><h4 class="action-heading"><div class="name">Delete Debitorcategory</div><a href="#debitorcategory-debitorcategory-delete" class="method delete">DELETE</a><code class="uri">/debitorcategory/{id}</code></h4><p>Delete a debitorcategory</p>
+<h4>Example URI</h4><div class="definition"><span class="method delete">DELETE</span>&nbsp;<span class="uri"><span class="hostname"></span>/debitorcategory/<span class="hljs-attribute" title="id">1099</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1099</span></span><p>Debitorcategory ID</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>204</code></strong></div></div></div></section>

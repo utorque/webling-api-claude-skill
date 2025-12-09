@@ -1,0 +1,93 @@
+<section id="letter" class="resource-group"><h2 class="group-heading">Letter <a href="#letter" class="permalink">&para;</a></h2><p>The letter object is used by the letter editor to write and send letters. They can be printed but also sent by e-mail.</p>
+<p>If a PDF has been generated, the <a href="#letterpdf">letterpdfs</a> are linked and the state of the letter is “sent”. A sent letter becomes immutable.</p>
+<p>Not all letter actions are available to API users (e.g. send letters by e-mail or saving drafts).</p>
+<p>Note: This is only available for letters created with the new editor</p>
+<div id="letter-letter-list" class="resource"><h3 class="resource-heading">Letter List <a href="#letter-letter-list" class="permalink">&nbsp;&para;</a></h3><div id="letter-letter-list-get" class="action get"><h4 class="action-heading"><div class="name">Get Letter List</div><a href="#letter-letter-list-get" class="method get">GET</a><code class="uri">/letter{?filter,order,format}</code></h4><p>Lists all available letter IDs.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/letter?<span class="hljs-attribute">filter=</span><span class="hljs-literal"></span>&<span class="hljs-attribute">order=</span><span class="hljs-literal">title ASC</span>&<span class="hljs-attribute">format=</span><span class="hljs-literal"></span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>filter</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter the list using the <a href="#header-query-language">Query Language</a></p>
+</dd><dt>order</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>title ASC</span></span><p>Sort the letter list by property and direction</p>
+</dd><dt>format</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Specify <code>format=full</code> to get the full object instead of a list of IDs</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">objects</span>": <span class="hljs-value">[
+    <span class="hljs-number">1098</span>,
+    <span class="hljs-number">1864</span>
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="letter-letter" class="resource"><h3 class="resource-heading">Letter <a href="#letter-letter" class="permalink">&nbsp;&para;</a></h3><div id="letter-letter-get" class="action get"><h4 class="action-heading"><div class="name">Get Letter</div><a href="#letter-letter-get" class="method get">GET</a><code class="uri">/letter/{id}</code></h4><p>Get a letter</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/letter/<span class="hljs-attribute" title="id">1099</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1099</span></span><p>Letter ID</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>JSON Representation of the Letter.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"letter"</span></span>,
+  "<span class="hljs-attribute">meta</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">created</span>": <span class="hljs-value"><span class="hljs-string">"2021-01-15 16:44:38"</span></span>,
+    "<span class="hljs-attribute">lastmodified</span>": <span class="hljs-value"><span class="hljs-string">"2021-01-15 16:45:21"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">readonly</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"Rechnung"</span></span>,
+    "<span class="hljs-attribute">state</span>": <span class="hljs-value"><span class="hljs-string">"sent"</span></span>,
+    "<span class="hljs-attribute">sentat</span>": <span class="hljs-value"><span class="hljs-string">"2021-01-15 16:45:20"</span></span>,
+    "<span class="hljs-attribute">sentby</span>": <span class="hljs-value"><span class="hljs-string">"Demo Benutzer &lt;demo@example.ch&gt;"</span></span>,
+    "<span class="hljs-attribute">data</span>": <span class="hljs-value"><span class="hljs-string">"... letter content ..."</span></span>,
+    "<span class="hljs-attribute">preview</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">href</span>": <span class="hljs-value"><span class="hljs-string">"/api/1/letter/4812/image/preview.png"</span></span>,
+      "<span class="hljs-attribute">hrefthumb</span>": <span class="hljs-value"><span class="hljs-string">"/api/1/letter/4812/thumb/preview.png"</span></span>,
+      "<span class="hljs-attribute">size</span>": <span class="hljs-value"><span class="hljs-number">126668</span></span>,
+      "<span class="hljs-attribute">name</span>": <span class="hljs-value"><span class="hljs-string">"preview.png"</span></span>,
+      "<span class="hljs-attribute">lastmodified</span>": <span class="hljs-value"><span class="hljs-string">"2021-01-15 16:45:09"</span></span>,
+      "<span class="hljs-attribute">dimensions</span>": <span class="hljs-value">{
+        "<span class="hljs-attribute">width</span>": <span class="hljs-value"><span class="hljs-number">400</span></span>,
+        "<span class="hljs-attribute">height</span>": <span class="hljs-value"><span class="hljs-number">570</span>
+      </span>}
+    </span>}</span>,
+    "<span class="hljs-attribute">isattachment</span>": <span class="hljs-value"><span class="hljs-literal">true</span></span>,
+    "<span class="hljs-attribute">lettertype</span>": <span class="hljs-value"><span class="hljs-string">"debitor"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">children</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">letterpdf</span>": <span class="hljs-value">[
+      <span class="hljs-number">4814</span>,
+      <span class="hljs-number">4815</span>,
+    ]
+  </span>}</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">debitor</span>": <span class="hljs-value">[
+      <span class="hljs-number">4546</span>,
+      <span class="hljs-number">4543</span>,
+    ]</span>,
+    "<span class="hljs-attribute">sender</span>": <span class="hljs-value">[
+      <span class="hljs-number">584</span>
+    ]
+  </span>}</span>,
+  "<span class="hljs-attribute">parents</span>": <span class="hljs-value">[]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div><div id="letter-letter-delete" class="action delete"><h4 class="action-heading"><div class="name">Delete Letter</div><a href="#letter-letter-delete" class="method delete">DELETE</a><code class="uri">/letter/{id}</code></h4><p>Delete a letter</p>
+<h4>Example URI</h4><div class="definition"><span class="method delete">DELETE</span>&nbsp;<span class="uri"><span class="hostname"></span>/letter/<span class="hljs-attribute" title="id">1099</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1099</span></span><p>Letter ID</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>204</code></strong></div></div></div><div id="letter-create-pdfs" class="resource"><h3 class="resource-heading">Create PDFs <a href="#letter-create-pdfs" class="permalink">&nbsp;&para;</a></h3><div id="letter-create-pdfs-post" class="action post"><h4 class="action-heading"><div class="name">Create PDF's</div><a href="#letter-create-pdfs-post" class="method post">POST</a><code class="uri">/letter/new/send</code></h4><p>This endpoint is used to create new PDF’s for members or debitors. The generated pdf is returned and the individual pdfs are saved as letterpdf objects for later retrieval.</p>
+<p>Properties:</p>
+<ul>
+<li>
+<p><code>title</code>: the title that is shown in the UI</p>
+</li>
+<li>
+<p><code>state</code>: only “sent” is allowed for this request</p>
+</li>
+<li>
+<p><code>data</code>: this contains the letter template to render the pdf. To see all options, the easiest way is to create a letter with the UI and check the resulting code. The format may change in the future, when new features are added.</p>
+</li>
+<li>
+<p><code>lettertype</code>: must either be “member” or “debitor”, depending on the type of links</p>
+</li>
+</ul>
+<p>Links: A letter can either be linked to members or debitors. You can pass multiple members or debitors at once, to generate multiple pdf’s.</p>
+<p>Response: A pdf binary is returned. If you are creating pdf’s for multiple members or debitors, the individual pdf’s are combined into one pdf with multiple pages.</p>
+<p>Below is a minimal example to generate a PDF:</p>
+<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname"></span>/letter/new/send</span></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"my letter"</span></span>,
+    "<span class="hljs-attribute">state</span>": <span class="hljs-value"><span class="hljs-string">"sent"</span></span>,
+    "<span class="hljs-attribute">data</span>": <span class="hljs-value"><span class="hljs-string">"{\"body\":[[{\"start\":0,\"width\":12,\"id\":\"1\",\"type\":\"html\",\"padding\":{\"top\":0,\"right\":0,\"bottom\":0,\"left\":0},\"content\":{\"html\":\"&lt;h1&gt;Hallo {{Vorname}}&lt;/h1&gt;\"}}]]}"</span></span>,
+    "<span class="hljs-attribute">lettertype</span>": <span class="hljs-value"><span class="hljs-string">"member"</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">member</span>": <span class="hljs-value">[
+      <span class="hljs-number">525</span>
+    ]
+  </span>}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong></div></div></div></section>

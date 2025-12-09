@@ -1,0 +1,78 @@
+<section id="definitions" class="resource-group"><h2 class="group-heading">Definitions <a href="#definitions" class="permalink">&para;</a></h2><div id="definitions-definitions" class="resource"><h3 class="resource-heading">Definitions <a href="#definitions-definitions" class="permalink">&nbsp;&para;</a></h3><div id="definitions-definitions-get" class="action get"><h4 class="action-heading"><div class="name">Get Definitions</div><a href="#definitions-definitions-get" class="method get">GET</a><code class="uri">/definition{?format}</code></h4><p>Returns the field configuration of all objects.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/definition?<span class="hljs-attribute">format=</span><span class="hljs-literal"></span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>format</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Format of the definition. The following formats are available:</p>
+<ul>
+<li>
+<p><code>simple</code>: this format is more human-readable, but does not contain all information</p>
+</li>
+<li>
+<p><code>full</code>: the full definition with all details. This format is also used to change the definitions</p>
+</li>
+<li>
+<p><code>zapier</code>: this format is used to connect Webling to Zapier. More information can be found on <a href="https://support.webling.ch/hc/de/articles/360018293372-Automatisierungen-mit-Zapier">support.webling.ch</a>.</p>
+</li>
+</ul>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code><span class="hljs-comment">/* ?format=simple */</span>
+{
+    <span class="hljs-string">"member"</span>: {
+        <span class="hljs-string">"label"</span>: [
+            <span class="hljs-string">"Vorname"</span>,
+            <span class="hljs-string">"Name"</span>
+        ],
+        <span class="hljs-string">"ordered"</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-string">"properties"</span>: {
+            <span class="hljs-string">"ID"</span>: {
+                <span class="hljs-string">"id"</span>: <span class="hljs-number">236</span>,
+                <span class="hljs-string">"datatype"</span>: <span class="hljs-string">"autoincrement"</span>,
+                <span class="hljs-string">"category"</span>: <span class="hljs-number">1</span>,
+                <span class="hljs-string">"order"</span>: <span class="hljs-number">0</span>
+            },
+            <span class="hljs-string">"Vorname"</span>: {
+                <span class="hljs-string">"id"</span>: <span class="hljs-number">83</span>,
+                <span class="hljs-string">"datatype"</span>: <span class="hljs-string">"text"</span>,
+                <span class="hljs-string">"category"</span>: <span class="hljs-number">1</span>,
+                <span class="hljs-string">"order"</span>: <span class="hljs-number">1</span>,
+                <span class="hljs-string">"type"</span>: <span class="hljs-string">"firstname"</span>
+            },
+            <span class="hljs-string">"Lizenz"</span>: {
+                <span class="hljs-string">"id"</span>: <span class="hljs-number">71</span>,
+                <span class="hljs-string">"datatype"</span>: <span class="hljs-string">"enum"</span>,
+                <span class="hljs-string">"category"</span>: <span class="hljs-number">1</span>,
+                <span class="hljs-string">"order"</span>: <span class="hljs-number">13</span>,
+                <span class="hljs-string">"values"</span>: [
+                    <span class="hljs-string">"1.Liga"</span>,
+                    <span class="hljs-string">"2.Liga"</span>,
+                    <span class="hljs-string">"Junior"</span>
+                ]
+            },
+            <span class="hljs-string">"Geburtstag"</span>: {
+                <span class="hljs-string">"id"</span>: <span class="hljs-number">68</span>,
+                <span class="hljs-string">"datatype"</span>: <span class="hljs-string">"date"</span>,
+                <span class="hljs-string">"category"</span>: <span class="hljs-number">1</span>,
+                <span class="hljs-string">"order"</span>: <span class="hljs-number">15</span>,
+                <span class="hljs-string">"type"</span>: <span class="hljs-string">"birthday"</span>
+            },
+            <span class="hljs-comment">/* more properties ... */</span>
+        },
+        <span class="hljs-string">"children"</span>: {},
+        <span class="hljs-string">"parents"</span>: <span class="hljs-string">"membergroup"</span>,
+        <span class="hljs-string">"links"</span>: {
+            <span class="hljs-string">"debitor"</span>: <span class="hljs-string">"debitor"</span>
+        },
+        <span class="hljs-string">"categories"</span>: {
+            <span class="hljs-string">"1"</span>: <span class="hljs-string">"Mitgliederdaten"</span>,
+            <span class="hljs-string">"2"</span>: <span class="hljs-string">"Zweite Kategorie"</span>
+        }
+    },
+    <span class="hljs-string">"user"</span>: {
+        <span class="hljs-string">"label"</span>: [ <span class="hljs-string">"title"</span> ],
+        <span class="hljs-string">"ordered"</span>: <span class="hljs-literal">false</span>,
+        <span class="hljs-string">"properties"</span>: { 
+            <span class="hljs-comment">/* user properties ... */</span> 
+        },
+        <span class="hljs-string">"children"</span>: {},
+        <span class="hljs-string">"parents"</span>: <span class="hljs-string">"usergroup"</span>,
+        <span class="hljs-string">"links"</span>: {},
+        <span class="hljs-string">"categories"</span>: []
+    },
+    <span class="hljs-comment">/* more datatypes (membergroup, article, document, ...) */</span>
+}</code></pre><div style="height: 1px;"></div></div></div></div></div></section>

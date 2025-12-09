@@ -1,0 +1,783 @@
+<section id="api-information" class="resource-group"><h2 class="group-heading">API Information <a href="#api-information" class="permalink">&para;</a></h2><p>This API lets you interact with your <a href="http://www.webling.ch">Webling</a> Database.</p>
+<p>The API is available at the following URL:</p>
+<p><code>https://&lt;yourdomain&gt;.webling.ch/api/1/</code></p>
+<p>See the <a href="#header-examples">Examples</a> section on how to use the API.</p>
+<h2 id="header-authentication">Authentication <a class="permalink" href="#header-authentication" aria-hidden="true">¶</a></h2>
+<p>The authentication is done by passing an API-Key. As an Administrator you can generate your API-Key in the Web App (Administration &gt; API).</p>
+<p>To authenticate, add the apikey parameter (<code>/api/1/member?apikey=&lt;your_api_key&gt;</code>) or add an apikey header (<code>apikey: &lt;your_api_key&gt;</code>) to every request.</p>
+<h2 id="header-response-format">Response format <a class="permalink" href="#header-response-format" aria-hidden="true">¶</a></h2>
+<p>Response body is in JSON format (except images/files). There are different JSON structures that are being used by the API:</p>
+<h3 id="header-objects">Objects <a class="permalink" href="#header-objects" aria-hidden="true">¶</a></h3>
+<p>All objects have the following basic structure:</p>
+<pre><code><span class="hljs-collection">{
+    <span class="hljs-string">"type"</span>: <span class="hljs-string">"objecttype"</span>,
+    <span class="hljs-string">"meta"</span>: <span class="hljs-collection">{ 
+        <span class="hljs-string">"created"</span> =&gt; <span class="hljs-string">"2018-04-06 01:20:04"</span>,
+        <span class="hljs-string">"lastmodified"</span> =&gt; <span class="hljs-string">"2017-05-23 11:43:54"</span>
+    }</span>,
+    <span class="hljs-string">"readonly"</span>: <span class="hljs-literal">false</span>,
+    <span class="hljs-string">"properties"</span>: <span class="hljs-collection">{}</span>,
+    <span class="hljs-string">"children"</span>: <span class="hljs-collection">{}</span>,
+    <span class="hljs-string">"parents"</span>: <span class="hljs-collection">[]</span>,
+    <span class="hljs-string">"links"</span>: <span class="hljs-collection">{}</span>
+}</span></code></pre>
+<p>These are the properties you find in the basic object structure:</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>type</code> string</td>
+<td>The object type, e.g <code>member</code> or <code>membergroup</code></td>
+</tr>
+<tr>
+<td><code>meta</code> object</td>
+<td>Contains the creation and last modify date of the object. For members it also contains the lat and lng of the address if available.</td>
+</tr>
+<tr>
+<td><code>readonly</code> boolean</td>
+<td>Is set to <code>true</code> if the object is read only for the user, otherwise <code>false</code></td>
+</tr>
+<tr>
+<td><code>properties</code> object</td>
+<td>Contains all object data (mixed datatypes), see below for a list of datatypes</td>
+</tr>
+<tr>
+<td><code>children</code> object</td>
+<td>Contains a list of objects with a list of all children, grouped by type. This property is read-only, you can change the parent attribute of the children objects instead.</td>
+</tr>
+<tr>
+<td><code>parents</code> array</td>
+<td>A list of all parent (IDs). Every object must have at least one parent.</td>
+</tr>
+<tr>
+<td><code>links</code> array</td>
+<td>A list of all linked objects (IDs).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="header-property-datatypes">Property datatypes <a class="permalink" href="#header-property-datatypes" aria-hidden="true">¶</a></h3>
+<p>Every property in <code>properties</code> has a datatype, which is one of the following:</p>
+<table>
+<thead>
+<tr>
+<th>Datatype</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>text</code></td>
+<td>String with a maximum size of 255 characters</td>
+</tr>
+<tr>
+<td><code>longtext</code></td>
+<td>String with a maximum size of 2 Gb</td>
+</tr>
+<tr>
+<td><code>bool</code></td>
+<td>Boolean value, <code>true</code> or <code>false</code>.</td>
+</tr>
+<tr>
+<td><code>enum</code></td>
+<td>Value out of a list of predefined values.</td>
+</tr>
+<tr>
+<td><code>multienum</code></td>
+<td>Array of one or several values out of a list of predefined values. (e.g. <code>[&quot;foo&quot;, &quot;bar&quot;]</code>)</td>
+</tr>
+<tr>
+<td><code>numeric</code></td>
+<td>Fixed floating point value with two digits accuracy.</td>
+</tr>
+<tr>
+<td><code>int</code></td>
+<td>Integer value</td>
+</tr>
+<tr>
+<td><code>autoincrement</code></td>
+<td>Immutable integer value, unique for objects of the same type.</td>
+</tr>
+<tr>
+<td><code>date</code></td>
+<td>Date value in the format YYYY-MM-DD (eg 2008-09-17)</td>
+</tr>
+<tr>
+<td><code>timestamp</code></td>
+<td>Time and date of the form YYYY-MM-DD hh:mm:ss (eg eg 2008-09-17 16:13:42)</td>
+</tr>
+<tr>
+<td><code>file</code></td>
+<td>Contains the metadata of a file, see below</td>
+</tr>
+<tr>
+<td><code>image</code></td>
+<td>Contains the metadata of an image, see below</td>
+</tr>
+<tr>
+<td><code>binary</code></td>
+<td>Contains the metadata of a binary file, can either be an image or a file, see below</td>
+</tr>
+</tbody>
+</table>
+<p>Metadata of a file:</p>
+<pre><code>{
+    <span class="hljs-string">"href"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// absolute path to the file data</span>
+    <span class="hljs-string">"size"</span>: <span class="hljs-keyword">int</span>, <span class="hljs-comment">// size of the file in bytes</span>
+    <span class="hljs-string">"ext"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// file extension</span>
+    <span class="hljs-string">"mime"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// mime type </span>
+    <span class="hljs-string">"timestamp"</span>: timestamp <span class="hljs-comment">// creation date</span>
+}</code></pre>
+<p>Metadata of an image:</p>
+<pre><code>{
+    <span class="hljs-string">"href"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// absolute path to the image data</span>
+    <span class="hljs-string">"size"</span>: <span class="hljs-keyword">int</span>, <span class="hljs-comment">// size of the image in bytes</span>
+    <span class="hljs-string">"ext"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// file extension</span>
+    <span class="hljs-string">"mime"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// mime type </span>
+    <span class="hljs-string">"timestamp"</span>: timestamp, <span class="hljs-comment">// creation date</span>
+    <span class="hljs-string">"dimensions"</span>: {
+        <span class="hljs-string">"width"</span>: <span class="hljs-keyword">int</span>, <span class="hljs-comment">// width in pixels</span>
+        <span class="hljs-string">"height"</span>: <span class="hljs-keyword">int</span> <span class="hljs-comment">// height in pixels</span>
+    }
+}</code></pre>
+<p>Metadata of a binary:</p>
+<pre><code>{
+    <span class="hljs-string">"href"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// absolute path to the file data</span>
+    <span class="hljs-string">"size"</span>: <span class="hljs-keyword">int</span>, <span class="hljs-comment">// size of the file in bytes</span>
+    <span class="hljs-string">"name"</span>: <span class="hljs-keyword">text</span>, <span class="hljs-comment">// filename</span>
+    <span class="hljs-string">"lastmodified"</span>: timestamp, <span class="hljs-comment">// last modified date</span>
+    <span class="hljs-string">"hrefthumb"</span>: <span class="hljs-keyword">string</span> <span class="hljs-comment">// link to the preview, if the file has a preview (only if it's an image)</span>
+}</code></pre>
+<h3 id="header-lists">Lists <a class="permalink" href="#header-lists" aria-hidden="true">¶</a></h3>
+<p>Lists contain object IDs (e.g: a list of member IDs):</p>
+<pre><code>{
+    "<span class="hljs-attribute">objects</span>": <span class="hljs-value">[<span class="hljs-number">12</span>,<span class="hljs-number">23</span>,<span class="hljs-number">34</span>,<span class="hljs-number">45</span>]
+</span>}</code></pre>
+<h3 id="header-files">Files <a class="permalink" href="#header-files" aria-hidden="true">¶</a></h3>
+<p>Files, images or binaries are returned as binary data with the appropriate content-type (e.g. image/png, application/xyz)</p>
+<h3 id="header-errors">Errors <a class="permalink" href="#header-errors" aria-hidden="true">¶</a></h3>
+<p>Errors have the following structure:</p>
+<pre><code>{
+    "<span class="hljs-attribute">error</span>": <span class="hljs-value"><span class="hljs-string">"Error message"</span>
+</span>}</code></pre>
+<h2 id="header-response-status-codes">Response Status Codes <a class="permalink" href="#header-response-status-codes" aria-hidden="true">¶</a></h2>
+<p>If possible, <a href="https://github.com/for-GET/know-your-http-well/blob/master/status-codes.md">HTTP Response Status Codes</a> are used:</p>
+<ul>
+<li>
+<p>200 OK: Request successful</p>
+</li>
+<li>
+<p>201 Created: Resource has been created</p>
+</li>
+<li>
+<p>204 No Content: The request was successful, no content is returned</p>
+</li>
+<li>
+<p>304 Not Modified: The content has not changed</p>
+</li>
+<li>
+<p>400 Bad Request: Invalid parameter passed</p>
+</li>
+<li>
+<p>401 Unauthorized: Authentication failed</p>
+</li>
+<li>
+<p>403 Forbidden: No permission to perform the request</p>
+</li>
+<li>
+<p>404 Not Found: The resource was not found</p>
+</li>
+<li>
+<p>413 Request Entity Too Large: try to split your request into multiple requests</p>
+</li>
+<li>
+<p>425 Quota Exceeded: The limit of your Webling subscription was reached</p>
+</li>
+<li>
+<p>429 Too many requests: your host has sent too many requests and has been blocked for a short period</p>
+</li>
+<li>
+<p>500 Server Error: An internal server error occurred</p>
+</li>
+<li>
+<p>501 Not Implemented: This call is not yet implemented</p>
+</li>
+<li>
+<p>503 Service Unavailable: The server can not handle the request, e.g a deadlock occurred</p>
+</li>
+</ul>
+<h2 id="header-rate-limit">Rate Limit <a class="permalink" href="#header-rate-limit" aria-hidden="true">¶</a></h2>
+<p>The API currently enforces a rate limit of 500 requests per minute. If you hit the rate limit, you will get an HTTP 429 Error.
+You can <a href="#header-fetch-multiple-objects">fetch multiple objects</a> in one call if you get the error code 429.
+The rate limit may be lowered in the future. Applications should be designed to not send more
+than 50 requests per minute. You can use caching to reduce the number of requests.</p>
+<p>See the section <a href="#track-changes-replicate">Track Changes / Replicate</a> for more information about how to detect changed data
+and only update these objects to reduce requests.</p>
+<h2 id="header-fetch-multiple-objects">Fetch Multiple Objects <a class="permalink" href="#header-fetch-multiple-objects" aria-hidden="true">¶</a></h2>
+<p>There are two ways to fetch multiple objects with one request:</p>
+<h3 id="header-option-1-multiple-ids-in-the-url">Option 1: multiple IDs in the url <a class="permalink" href="#header-option-1-multiple-ids-in-the-url" aria-hidden="true">¶</a></h3>
+<p>You can request multiple objects with one call (multiget). To do so, concatenate all IDs with a comma:</p>
+<pre><code>/api/<span class="hljs-number">1</span>/member/<span class="hljs-number">536</span>,<span class="hljs-number">525</span>,<span class="hljs-number">506</span>,<span class="hljs-number">535</span></code></pre>
+<p>This also works for DELETE Requests.</p>
+<h3 id="header-option-2-fetch-data-instead-of-ids">Option 2: fetch data instead of IDs <a class="permalink" href="#header-option-2-fetch-data-instead-of-ids" aria-hidden="true">¶</a></h3>
+<p>When loading lists like <code>/member</code> or <code>/membergroup</code> by default you get object IDs only.
+This is due to the fact that large stores will take a while to return all object data.</p>
+<p>If you are dealing with a lot of data, using a caching mechanism is really recommended.
+See <a href="#track-changes-replicate">Replicate</a>.</p>
+<p>You can fetch full data, instead of the IDs only, by appending the <code>format=full</code> parameter.</p>
+<p>Example:</p>
+<pre><code>/api/<span class="hljs-number">1</span>/member?format=full</code></pre>
+<p>This will return all member objects (with full data).</p>
+<p>You can also combine this with other parameters like <code>filter</code> to only load certain members:</p>
+<pre><code>/api/<span class="hljs-number">1</span>/member?format=full&amp;filter=<span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span>=<span class="hljs-number">552</span></code></pre>
+<p>This will return all members which are in the membergroup with the id 552.</p>
+<h2 id="header-pagination">Pagination <a class="permalink" href="#header-pagination" aria-hidden="true">¶</a></h2>
+<p>You can limit the number of results with the pagination parameters:</p>
+<pre><code>/api/<span class="hljs-number">1</span>/member?page=<span class="hljs-number">1</span>&amp;per_page=<span class="hljs-number">100</span>
+/api/<span class="hljs-number">1</span>/member?format=full&amp;page=<span class="hljs-number">4</span>&amp;per_page=<span class="hljs-number">10</span></code></pre>
+<ul>
+<li>
+<p><code>page</code>: page number, starting with 1 for the first page</p>
+</li>
+<li>
+<p><code>per_page</code>: number of results per page</p>
+</li>
+</ul>
+<h2 id="header-query-language">Query Language <a class="permalink" href="#header-query-language" aria-hidden="true">¶</a></h2>
+<p>All GET endpoints, which return a list of object IDs, can be filtered using the following query language. A query is
+passed by the <code>filter=</code> parameter.</p>
+<p>Example:</p>
+<pre><code><span class="hljs-symbol">https:</span>/<span class="hljs-regexp">/demo.webling.ch/api</span><span class="hljs-regexp">/1/member</span>?filter=<span class="hljs-string">`Vorname`</span> = <span class="hljs-string">"Hans"</span>&amp;apikey=__YOUR_API_KEY_<span class="hljs-number">_</span></code></pre>
+<p>Explanation of the query language syntax:</p>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Objects can be queried by properties (fields)</td>
+<td><code>`Name` = &quot;Meier&quot;</code> or <code>`Betrag` &gt; 100</code></td>
+</tr>
+<tr>
+<td>Properties containing special characters must be enclosed by backticks</td>
+<td><code>`Zweiter Name` FILTER &quot;Mei&quot;</code></td>
+</tr>
+<tr>
+<td>All properties can be queried by *</td>
+<td><code>* = &quot;Müller&quot;</code></td>
+</tr>
+<tr>
+<td>A value can be searched in several properties. Separate the properties by comma</td>
+<td><code>`Name`,`Betrag` = &quot;Müller&quot;</code></td>
+</tr>
+<tr>
+<td>A property can be checked if it is empty or not empty</td>
+<td><code>`Name` IS EMPTY</code> or <code>NOT `Betrag` IS EMPTY</code></td>
+</tr>
+<tr>
+<td>The set expression checks if a property is in a list</td>
+<td><code>`Name` IN (&quot;Hans&quot;, &quot;Jürg&quot;)</code></td>
+</tr>
+<tr>
+<td>Multiple conditions can be joined by AND, OR and brackets</td>
+<td><code>(`Name` = &quot;Meier&quot; OR `Name` = &quot;Müller&quot;) AND `Vorname` = &quot;Hans&quot;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="header-special-properties">Special Properties <a class="permalink" href="#header-special-properties" aria-hidden="true">¶</a></h3>
+<p>There are some special properties you can use beside the normal properties:</p>
+<table>
+<thead>
+<tr>
+<th>Special Property</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>$parents.&lt;property&gt;</code></td>
+<td>query a property of a parent</td>
+</tr>
+<tr>
+<td><code>$ancestors.&lt;property&gt;</code></td>
+<td>query a property of any ancestor. The ancestors operator is only allowed for members, membergroups, documents and documentgroups (e.g. used for search in subgroups)</td>
+</tr>
+<tr>
+<td><code>$children.&lt;childtype&gt;.&lt;property&gt;</code></td>
+<td>query a property of a child</td>
+</tr>
+<tr>
+<td><code>$links.&lt;category&gt;.&lt;property&gt;</code></td>
+<td>query a property of a link</td>
+</tr>
+<tr>
+<td><code>$readonly</code>, <code>$writable</code></td>
+<td>bool value indicating if the object is readonly/writable</td>
+</tr>
+<tr>
+<td><code>$label</code></td>
+<td>label of the object (usually the title)</td>
+</tr>
+<tr>
+<td><code>$id</code></td>
+<td>id of the object</td>
+</tr>
+</tbody>
+</table>
+<p>The backtick is not required for these special properties.</p>
+<h3 id="header-operators">Operators <a class="permalink" href="#header-operators" aria-hidden="true">¶</a></h3>
+<p>You can use the following comparison operators:</p>
+<table>
+<thead>
+<tr>
+<th>Operator</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>&lt;</code></td>
+<td>less than</td>
+<td><code>`PLZ` &lt; 2000</code></td>
+</tr>
+<tr>
+<td><code>&lt;=</code></td>
+<td>less or equal than</td>
+<td><code>`PLZ` &lt;= 2000</code></td>
+</tr>
+<tr>
+<td><code>&gt;</code></td>
+<td>greater than</td>
+<td><code>`PLZ` &gt; 2000</code></td>
+</tr>
+<tr>
+<td><code>&gt;=</code></td>
+<td>greater or equal than</td>
+<td><code>`PLZ` &gt;= 2000</code></td>
+</tr>
+<tr>
+<td><code>=</code></td>
+<td>equal</td>
+<td><code>`Name` = &quot;Meier&quot;</code></td>
+</tr>
+<tr>
+<td><code>!=</code></td>
+<td>not equal</td>
+<td><code>`Name` != &quot;Meier&quot;</code></td>
+</tr>
+<tr>
+<td><code>FILTER</code></td>
+<td>matches all strings starting with the argument.</td>
+<td><code>`Name` FILTER &quot;Me&quot;</code> matches Meier, Mettler, …</td>
+</tr>
+<tr>
+<td><code>CONTAINS</code></td>
+<td>searches whole strings for matches (Note: <code>CONTAINS</code> is much slower than <code>FILTER</code>, use <code>FILTER</code> whenever possible).</td>
+<td><code>`Name` CONTAINS &quot;an&quot;</code> matches Andermatt, Baumann, …</td>
+</tr>
+<tr>
+<td><code>IS EMPTY</code></td>
+<td>matches all empty values (<code>null</code> and empty string).</td>
+<td><code>`E-Mail` IS EMPTY</code></td>
+</tr>
+<tr>
+<td><code>IN</code></td>
+<td>matches multiple values</td>
+<td><code>`Lizenz` IN (&quot;Junior&quot;, &quot;1. Liga&quot;)</code> matches all members with Lizenz “Junior” or “1. Liga”</td>
+</tr>
+<tr>
+<td><code>WITH</code></td>
+<td>links queries of multiple properties in a linked object</td>
+<td><code>WITH $links.debitor (totalamount &gt; 100 AND title = &quot;Jahresrechnung&quot;)</code> matches only if both conditions are satisfied by the same debitor object</td>
+</tr>
+</tbody>
+</table>
+<h3 id="header-functions">Functions <a class="permalink" href="#header-functions" aria-hidden="true">¶</a></h3>
+<p>The following functions are available:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LOWER(&lt;string&gt;)</code></td>
+<td>converts a text or longtext property to lower case</td>
+</tr>
+<tr>
+<td><code>TRIM(&lt;string&gt;)</code></td>
+<td>trims a text or longtext property</td>
+</tr>
+<tr>
+<td><code>UPPER(&lt;string&gt;)</code></td>
+<td>converts a text or longtext property to upper case</td>
+</tr>
+<tr>
+<td><code>DAY(&lt;date&gt;)</code></td>
+<td>returns the day of a date property</td>
+</tr>
+<tr>
+<td><code>MONTH(&lt;date&gt;)</code></td>
+<td>returns the month of a date property</td>
+</tr>
+<tr>
+<td><code>YEAR(&lt;date&gt;)</code></td>
+<td>returns the year of a date property</td>
+</tr>
+<tr>
+<td><code>AGE(&lt;date&gt;)</code></td>
+<td>returns the age of a date property</td>
+</tr>
+<tr>
+<td><code>AGETHISYEAR(&lt;date&gt;)</code></td>
+<td>returns the age the person will reach at the end of this year</td>
+</tr>
+<tr>
+<td><code>BIRTHDAY(&lt;date&gt;, month, day)</code></td>
+<td>returns a number which can be used to sort by birthdays after the given day</td>
+</tr>
+<tr>
+<td><code>TODAY()</code></td>
+<td>returns the current date</td>
+</tr>
+<tr>
+<td><code>COUNT(&lt;path&gt;)</code></td>
+<td>call to order the results by the number of link, children or parents. This call is only available in the order parameter.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="header-sort-the-results">Sort the results <a class="permalink" href="#header-sort-the-results" aria-hidden="true">¶</a></h3>
+<p>The results can be sorted by the <code>order</code> parameter, using the following pattern:</p>
+<pre><code>?order=<span class="hljs-escape">`V</span>orname<span class="hljs-escape">` </span>ASC
+?order=<span class="hljs-escape">`V</span>orname<span class="hljs-escape">` </span>DESC, <span class="hljs-escape">`N</span>achname<span class="hljs-escape">` </span>ASC</code></pre>
+<p>Special properties are also allowed:</p>
+<pre><code>?<span class="hljs-keyword">order</span>=<span class="hljs-variable">$label</span> ASC 
+?<span class="hljs-keyword">order</span>=<span class="hljs-variable">$parents</span>.title DESC
+?<span class="hljs-keyword">order</span>=DAY(`Geburtstag`) DESC</code></pre>
+<h3 id="header-query-examples">Query Examples <a class="permalink" href="#header-query-examples" aria-hidden="true">¶</a></h3>
+<p>To filter for members, use the filter argument in the URL like this:</p>
+<pre><code><span class="hljs-label">https:</span>//demo.webling.ch/api/<span class="hljs-number">1</span>/member?filter=<span class="hljs-escape">`V</span>orname<span class="hljs-escape">` </span>= <span class="hljs-string">"Hans"</span> <span class="hljs-literal">OR</span> <span class="hljs-escape">`N</span>ame<span class="hljs-escape">` </span>= <span class="hljs-string">"Weber"</span>&amp;apikey=__YOUR_API_KEY__</code></pre>
+<p>Get all members in a specific membergroup (id = 555) and sort them by “Vorname”:</p>
+<pre><code>member?filter=<span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> = <span class="hljs-number">555</span>&amp;<span class="hljs-keyword">order</span>=`Vorname` ASC</code></pre>
+<p>You can nest AND and OR conditions and use parentheses:</p>
+<pre><code>member?filter=<span class="hljs-escape">`V</span>orname<span class="hljs-escape">` </span>= <span class="hljs-string">"Peter"</span> <span class="hljs-literal">OR</span> (<span class="hljs-escape">`V</span>orname<span class="hljs-escape">` </span>= <span class="hljs-string">"Hans"</span> <span class="hljs-literal">AND</span> <span class="hljs-escape">`N</span>ame<span class="hljs-escape">` </span>= <span class="hljs-string">"Meier"</span> <span class="hljs-literal">OR</span> (<span class="hljs-escape">`P</span>LZ<span class="hljs-escape">` </span>&gt; <span class="hljs-number">100</span> <span class="hljs-literal">AND</span> <span class="hljs-escape">`P</span>LZ<span class="hljs-escape">` </span>&lt;= <span class="hljs-number">4000</span>))</code></pre>
+<p>Get all members that are in one of the membergroups 100, 101 or 102:</p>
+<pre><code>member?filter=<span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> = <span class="hljs-number">100</span> OR <span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> = <span class="hljs-number">101</span> OR <span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> = <span class="hljs-number">102</span>
+member?filter=<span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> IN (<span class="hljs-number">100</span>, <span class="hljs-number">101</span>, <span class="hljs-number">102</span>)</code></pre>
+<p>Get all members that are in a membergroup with the title “Vorstand”:</p>
+<pre><code>member?filter=<span class="hljs-variable">$parents</span>.title = <span class="hljs-string">"Vorstand"</span></code></pre>
+<p>Get all members that are not in the membergroup with the id 100:</p>
+<pre><code>member?filter=NOT(<span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> = <span class="hljs-number">100</span>)</code></pre>
+<p>Use IN to search for multiple values:</p>
+<pre><code>member?filter=`ID` IN (<span class="hljs-number">22</span>, <span class="hljs-number">45</span>, <span class="hljs-number">67</span>)
+member?filter=`Status` IN (<span class="hljs-string">"Aktiv"</span>, <span class="hljs-string">"Passiv"</span>, <span class="hljs-string">"Ehrenmitglied"</span>)
+member?filter=<span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> IN (<span class="hljs-number">520</span>, <span class="hljs-number">612</span>, <span class="hljs-number">802</span>, <span class="hljs-number">1023</span>)
+member?filter=NOT(<span class="hljs-variable">$parents</span>.<span class="hljs-variable">$id</span> IN (<span class="hljs-number">438</span>, <span class="hljs-number">748</span>, <span class="hljs-number">893</span>))</code></pre>
+<p>Get all members, where the field “E-Mail” equals the field “E-Mail Geschäft”:</p>
+<pre><code>member?filter=<span class="hljs-escape">`E</span>-Mail<span class="hljs-escape">` </span>= <span class="hljs-escape">`E</span>-Mail Geschäft<span class="hljs-escape">`
+</span></code></pre>
+<p>Get all members with an empty E-Mail field:</p>
+<pre><code>member?<span class="hljs-built_in">filter</span>=`E-Mail` <span class="hljs-keyword">IS</span> <span class="hljs-literal">EMPTY</span></code></pre>
+<p>Get all members where the E-Mail field is not empty:</p>
+<pre><code>member?<span class="hljs-built_in">filter</span>=<span class="hljs-keyword">NOT</span>(`E-Mail` <span class="hljs-keyword">IS</span> <span class="hljs-literal">EMPTY</span>)
+member?<span class="hljs-built_in">filter</span>=<span class="hljs-keyword">NOT</span> `E-Mail` <span class="hljs-keyword">IS</span> <span class="hljs-literal">EMPTY</span></code></pre>
+<p>Filter by Age (years):</p>
+<pre><code>member?filter=AGE(<span class="hljs-escape">`G</span>eburtstag<span class="hljs-escape">`)</span> = <span class="hljs-number">22</span>
+member?filter=AGE(<span class="hljs-escape">`E</span>intrittsdatum<span class="hljs-escape">`)</span> &gt; <span class="hljs-number">5</span></code></pre>
+<p>Use of the UPPER function to match case-insensitive:</p>
+<pre><code>member?filter=UPPER(<span class="hljs-escape">`N</span>ame<span class="hljs-escape">`)</span> = <span class="hljs-string">"MEIER"</span></code></pre>
+<p>Find all members with birthday in August:</p>
+<pre><code>member?filter=MONTH(<span class="hljs-escape">`G</span>eburtstag<span class="hljs-escape">`)</span> = <span class="hljs-number">8</span></code></pre>
+<p>You can also sort the results by day:</p>
+<pre><code>member?filter=MONTH(<span class="hljs-escape">`G</span>eburtstag<span class="hljs-escape">`)</span> = <span class="hljs-number">8</span>&amp;sort=DAY(<span class="hljs-escape">`G</span>eburtstag<span class="hljs-escape">`)</span> ASC</code></pre>
+<p>Find all members with birthday after August 20th:</p>
+<pre><code>member?filter=MONTH(<span class="hljs-escape">`G</span>eburtstag<span class="hljs-escape">`)</span> &gt; <span class="hljs-number">8</span> <span class="hljs-literal">OR</span> (MONTH(<span class="hljs-escape">`G</span>eburtstag<span class="hljs-escape">`)</span> = <span class="hljs-number">8</span> <span class="hljs-literal">AND</span> DAY(<span class="hljs-escape">`G</span>eburtstag<span class="hljs-escape">`)</span> &gt; <span class="hljs-number">20</span>)</code></pre>
+<p>Search for dates relative to today (all future dates):</p>
+<pre><code>member?filter=<span class="hljs-escape">`E</span>intrittsdatum<span class="hljs-escape">` </span>&gt; TODAY()</code></pre>
+<p>Comparing dates:</p>
+<pre><code>member?filter=<span class="hljs-escape">`E</span>intrittsdatum<span class="hljs-escape">` </span>&lt;= <span class="hljs-string">"2018-06-23"</span>
+member?filter=<span class="hljs-escape">`E</span>intrittsdatum<span class="hljs-escape">` </span>= <span class="hljs-string">"2018-03-06"</span></code></pre>
+<p>Use of multienum operators:</p>
+<pre><code>member?filter=<span class="hljs-escape">`M</span>ehrfachauswahlfeld<span class="hljs-escape">` </span>IS [<span class="hljs-string">"Wert"</span>]
+member?filter=<span class="hljs-escape">`M</span>ehrfachauswahlfeld<span class="hljs-escape">` </span>CONTAINS ALL OF [<span class="hljs-string">"Wert"</span>, <span class="hljs-string">"Wert 1"</span>]
+member?filter=<span class="hljs-escape">`M</span>ehrfachauswahlfeld<span class="hljs-escape">` </span>CONTAINS NONE OF [<span class="hljs-string">"Wert 1"</span>, <span class="hljs-string">"Wert 2"</span>]
+member?filter=<span class="hljs-escape">`M</span>ehrfachauswahlfeld<span class="hljs-escape">` </span>CONTAINS ANY OF [<span class="hljs-string">"Wert 2"</span>]</code></pre>
+<p>Get the member that is linked to the debitor with the id 851:</p>
+<pre><code>member?filter=<span class="hljs-variable">$links</span>.debitor.<span class="hljs-variable">$id</span>=<span class="hljs-number">851</span></code></pre>
+<p>Get all members with open debitors:</p>
+<pre><code>member?filter=<span class="hljs-variable">$links</span>.debitor.<span class="hljs-keyword">state</span>=<span class="hljs-string">"open"</span></code></pre>
+<p>Get all members with a debitor of amount 100:</p>
+<pre><code>member?filter=<span class="hljs-variable">$links</span>.debitor.<span class="hljs-variable">$links</span>.revenue.amount = <span class="hljs-number">100</span></code></pre>
+<p>Find all members with comments:</p>
+<pre><code>member?filter=<span class="hljs-variable">$links</span>.comment.<span class="hljs-variable">$id</span> &gt; <span class="hljs-number">0</span></code></pre>
+<p>Combine $links and $children to find all entrygroups that have links to a debitor with the $label “Meier”:</p>
+<pre><code>entrygroup?filter=<span class="hljs-variable">$children</span>.entry.<span class="hljs-variable">$links</span>.debitor.<span class="hljs-variable">$links</span>.member.<span class="hljs-variable">$label</span> filter <span class="hljs-string">"Meier"</span></code></pre>
+<p>Get all membergroups that have members with a PLZ over 9000:</p>
+<pre><code>membergroup?filter=<span class="hljs-variable">$children</span>.member.PLZ &gt; <span class="hljs-number">9000</span></code></pre>
+<p>Search in group and subgroups of membergroup 550:</p>
+<pre><code>member?filter=`Vorname` = <span class="hljs-string">"Tim"</span> AND <span class="hljs-variable">$ancestors</span>.<span class="hljs-variable">$id</span> = <span class="hljs-number">550</span></code></pre>
+<p>Get all members you have write access to:</p>
+<pre><code>member?filter=<span class="hljs-variable">$writable</span>=<span class="hljs-literal">true</span></code></pre>
+<h4 id="header-with()-operator">WITH() operator <a class="permalink" href="#header-with()-operator" aria-hidden="true">¶</a></h4>
+<blockquote>
+<p>Using multiple filters in linked objects may lead to unexpected results, since the conditions are executed separately.</p>
+<pre><code>member?filter=<span class="hljs-variable">$links</span>.debitor.totalamount &gt; <span class="hljs-number">100</span> AND <span class="hljs-variable">$links</span>.debitor.remainingamount &gt; <span class="hljs-number">0</span></code></pre>
+<p>Will give you all members that have a debitor with totalamount &gt; 100 and a <em>different</em> debitor with remainingamount &gt; 0.<br>
+If you want to filter by multiple properties of a linked object, use the <code>WITH</code> operator:</p>
+<pre><code>member?filter=WITH <span class="hljs-variable">$links</span>.debitor (totalamount &gt; <span class="hljs-number">100</span> AND remainingamount &gt; <span class="hljs-number">0</span>)</code></pre>
+<p>This will find members with a debitor over 100, which are not yet paid in full.</p>
+</blockquote>
+<p>Don’t forget to <a href="http://www.url-encode-decode.com">encode the URL</a> if you are using special chars in your query.</p>
+<h3 id="header-ebnf">EBNF <a class="permalink" href="#header-ebnf" aria-hidden="true">¶</a></h3>
+<p>If you want to dig deeper, this is the formal definition of the query language:</p>
+<pre><code>start                   <span class="hljs-type-annotation">::</span>= orExpr
+
+orExpr                  <span class="hljs-type-annotation">::</span>= andExpr <span class="hljs-string">"OR"</span> orExpr
+andExpr                 <span class="hljs-type-annotation">::</span>= notExpr <span class="hljs-string">"AND"</span> orExpr
+notExpr                 <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"NOT"</span>? withExpr
+withExpr                <span class="hljs-type-annotation">::</span>= ( <span class="hljs-string">"WITH"</span> axisExpr ( <span class="hljs-string">"."</span> axisExpr )* )? bracketExpr
+bracketExpr             <span class="hljs-type-annotation">::</span>= ( <span class="hljs-string">"("</span> orExpr <span class="hljs-string">")"</span> ) | atomExpr
+
+atomExpr                <span class="hljs-type-annotation">::</span>= comparisonExpr | filterComparisonExpr | containsComparisonExpr | multienumComparisonExpr | emptyExpr | setExpr
+comparisonExpr          <span class="hljs-type-annotation">::</span>= contentExpr universalOpExpr contentExpr
+filterComparisonExpr    <span class="hljs-type-annotation">::</span>= contentExpr <span class="hljs-string">"FILTER"</span> valueExpr
+containsComparisonExpr  <span class="hljs-type-annotation">::</span>= contentExpr <span class="hljs-string">"CONTAINS"</span> stringExpr
+multienumComparisonExpr <span class="hljs-type-annotation">::</span>= contentExpr multienumOpExpr jsonStringArrayExpr
+emptyExpr               <span class="hljs-type-annotation">::</span>= contentExpr <span class="hljs-string">"IS"</span> <span class="hljs-string">"EMPTY"</span>
+setExpr                 <span class="hljs-type-annotation">::</span>= contentExpr <span class="hljs-string">"IN"</span> <span class="hljs-string">"("</span> valueExpr (<span class="hljs-string">","</span> valueExpr)* <span class="hljs-string">")"</span>
+
+universalOpExpr         <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"&lt;"</span> | <span class="hljs-string">"&lt;="</span> | <span class="hljs-string">"&gt;"</span> | <span class="hljs-string">"&gt;="</span> | <span class="hljs-string">"="</span> | <span class="hljs-string">"!="</span>
+multienumOpExpr         <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"CONTAINS ALL OF"</span> | <span class="hljs-string">"IS"</span> | <span class="hljs-string">"CONTAINS NONE OF"</span> | <span class="hljs-string">"CONTAINS ANY OF"</span>
+
+contentExpr             <span class="hljs-type-annotation">::</span>= valueExpr | jsonPathExpr | callExpr | pathExpr
+valueExpr               <span class="hljs-type-annotation">::</span>= stringExpr | numberExpr | boolExpr
+callExpr                <span class="hljs-type-annotation">::</span>= literalExpr <span class="hljs-string">"("</span> (contentExpr (<span class="hljs-string">","</span> contentExpr)* )? <span class="hljs-string">")"</span>
+pathExpr                <span class="hljs-type-annotation">::</span>= propertiesExpr | accessExpr | labelExpr | idExpr | ( axisExpr <span class="hljs-string">"."</span> pathExpr )
+propertiesExpr          <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"*"</span> | ( propertyExpr (<span class="hljs-string">","</span> propertyExpr)* )
+propertyExpr            <span class="hljs-type-annotation">::</span>= literalExpr | backtickExpr
+jsonPathExpr            <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"JSON"</span> ( pathExpr ) ( <span class="hljs-string">"["</span> ( stringExpr | intExpr ) <span class="hljs-string">"]"</span> )*
+axisExpr                <span class="hljs-type-annotation">::</span>= parentExpr | ancestorExpr | childExpr | linkExpr | reverseLinkExpr
+parentExpr              <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$parents</span>"</span>
+ancestorExpr            <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$ancestors</span>"</span>
+childExpr               <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$children</span>"</span> <span class="hljs-string">"."</span> literalExpr
+linkExpr                <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$links</span>"</span> <span class="hljs-string">"."</span> literalExpr
+reverseLinkExpr         <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$reverselinks</span>"</span> <span class="hljs-string">"."</span> literalExpr ( <span class="hljs-string">"{"</span> literalExpr <span class="hljs-string">"}"</span> )? <span class="hljs-string">"."</span> pathExpr
+axisExpr                <span class="hljs-type-annotation">::</span>= parentExpr | ancestorExpr | childExpr | linkExpr | reverseLinkExpr
+parentExpr              <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$parents</span>"</span>
+ancestorExpr            <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$ancestors</span>"</span>
+childExpr               <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$children</span>"</span> <span class="hljs-string">"."</span> literalExpr
+linkExpr                <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$links</span>"</span> <span class="hljs-string">"."</span> literalExpr
+reverseLinkExpr         <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$reverselinks</span>"</span> <span class="hljs-string">"."</span> literalExpr
+
+accessExpr              <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$readonly</span>"</span> | <span class="hljs-string">"<span class="hljs-variable">$writable</span>"</span>
+labelExpr               <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$label</span>"</span>
+idExpr                  <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"<span class="hljs-variable">$id</span>"</span>
+
+stringExpr              <span class="hljs-type-annotation">::</span>= (<span class="hljs-string">"'"</span> /[^<span class="hljs-string">"]* / "</span>'<span class="hljs-string">") | ('"</span>' /[^']* / <span class="hljs-char">'"'</span>)
+backtickExpr            <span class="hljs-type-annotation">::</span>= <span class="hljs-string">"`"</span> /[^<span class="hljs-string">`]* / "`</span><span class="hljs-string">"
+literalExpr             ::= /\w* /
+boolExpr                ::= "TRUE</span><span class="hljs-string">" | "FALSE</span><span class="hljs-string">"
+intExpr                 ::= "</span>-<span class="hljs-string">"? /\d+/
+numberExpr              ::= "</span>-<span class="hljs-string">"? /\d+/ ( "</span>.<span class="hljs-string">" /\d* / )?
+jsonStringArrayExpr     ::= "</span>[<span class="hljs-string">" stringExpr ( "</span>,<span class="hljs-string">" stringExpr )* "</span>]<span class="hljs-string">"
+</span></code></pre>
+<h2 id="header-examples">Examples <a class="permalink" href="#header-examples" aria-hidden="true">¶</a></h2>
+<p>Some simple examples how to use the API.</p>
+<p>More examples can be found on our GitHub page: <a href="https://github.com/usystems/webling-api-examples">github.com/usystems/webling-api-examples</a></p>
+<h3 id="header-php">PHP <a class="permalink" href="#header-php" aria-hidden="true">¶</a></h3>
+<p>This is a simple example to get the title of a Membergroup in PHP:</p>
+<pre><code class="language-php"><span class="hljs-variable">$apiurl</span> = <span class="hljs-string">"https://demo.webling.ch"</span>;
+<span class="hljs-variable">$apikey</span> = <span class="hljs-string">"&lt;your_api_key&gt;"</span>;
+
+<span class="hljs-variable">$url</span> = <span class="hljs-variable">$apiurl</span> . <span class="hljs-string">"/api/1/membergroup/1?apikey="</span> . <span class="hljs-variable">$apikey</span>;
+<span class="hljs-variable">$curl</span> = curl_init();
+curl_setopt(<span class="hljs-variable">$curl</span>, CURLOPT_URL, <span class="hljs-variable">$url</span>);
+curl_setopt(<span class="hljs-variable">$curl</span>, CURLOPT_RETURNTRANSFER, <span class="hljs-keyword">true</span>);
+<span class="hljs-variable">$data</span> = json_decode(curl_exec(<span class="hljs-variable">$curl</span>), <span class="hljs-keyword">true</span>);
+<span class="hljs-keyword">echo</span> <span class="hljs-variable">$data</span>[<span class="hljs-string">"properties"</span>][<span class="hljs-string">"title"</span>];</code></pre>
+<p>This is a simple example that shows how to create a new member in PHP:</p>
+<pre><code class="language-php"><span class="hljs-variable">$apiurl</span> = <span class="hljs-string">"https://demo.webling.ch"</span>;
+<span class="hljs-variable">$apikey</span> = <span class="hljs-string">"&lt;your_api_key&gt;"</span>;
+
+<span class="hljs-variable">$curl</span> = curl_init();
+curl_setopt(<span class="hljs-variable">$curl</span>, CURLOPT_POST, <span class="hljs-number">1</span>);
+curl_setopt(<span class="hljs-variable">$curl</span>, CURLOPT_POSTFIELDS, json_encode(<span class="hljs-keyword">array</span>(
+    <span class="hljs-string">"properties"</span> =&gt; <span class="hljs-keyword">array</span>(
+        <span class="hljs-string">"Vorname"</span> =&gt; <span class="hljs-string">"Fritz"</span>,
+        <span class="hljs-string">"Name"</span> =&gt; <span class="hljs-string">"Meier"</span>,
+        <span class="hljs-string">"E-Mail"</span> =&gt; <span class="hljs-string">"fritz.meier@example.ch"</span>
+    ),
+    <span class="hljs-comment">// ID of the membergroup where the member should be added, replace with your own ID</span>
+    <span class="hljs-string">"parents"</span> =&gt; <span class="hljs-keyword">array</span>(<span class="hljs-number">550</span>)
+)));
+curl_setopt(<span class="hljs-variable">$curl</span>, CURLOPT_URL, <span class="hljs-variable">$apiurl</span> . <span class="hljs-string">"/api/1/member?apikey="</span> . <span class="hljs-variable">$apikey</span>);
+curl_setopt(<span class="hljs-variable">$curl</span>, CURLOPT_RETURNTRANSFER, <span class="hljs-keyword">true</span>);
+<span class="hljs-variable">$response</span> = curl_exec(<span class="hljs-variable">$curl</span>);
+<span class="hljs-variable">$code</span> = curl_getinfo(<span class="hljs-variable">$curl</span>, CURLINFO_HTTP_CODE);
+<span class="hljs-keyword">if</span> (<span class="hljs-variable">$code</span> != <span class="hljs-number">201</span>) {
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">'Error: '</span>. <span class="hljs-variable">$response</span> . <span class="hljs-string">' HTTP-Status Code: '</span>.<span class="hljs-variable">$code</span>;
+} <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">echo</span> <span class="hljs-string">'Creation successful. ID of new member: '</span>.<span class="hljs-variable">$response</span>;
+}</code></pre>
+<h3 id="header-javascript">JavaScript <a class="permalink" href="#header-javascript" aria-hidden="true">¶</a></h3>
+<p>This is a simple example to get the title of a Membergroup in JavaScript:</p>
+<p><strong>WARNING:</strong> Don’t use this example in production, as the Apikey is exposed to the user!</p>
+<pre><code class="language-html"><span class="hljs-doctype">&lt;!doctype html&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">html</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">meta</span> <span class="hljs-attribute">charset</span>=<span class="hljs-value">"utf-8"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">script</span> <span class="hljs-attribute">src</span>=<span class="hljs-value">"https://code.jquery.com/jquery-2.1.4.min.js"</span>&gt;</span><span class="undefined"></span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">script</span>&gt;</span><span class="javascript">
+        <span class="hljs-keyword">var</span> apiurl = <span class="hljs-string">"https://demo.webling.ch"</span>;
+        <span class="hljs-keyword">var</span> apikey = <span class="hljs-string">"&lt;your_api_key&gt;"</span>;
+        $(<span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>{
+            $.ajax(apiurl + <span class="hljs-string">"/api/1/membergroup/1?apikey="</span> + apikey).then(
+                <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">data</span>) </span>{
+                    $(<span class="hljs-string">'#title'</span>).html(data.properties.title)
+                },
+                <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params">jqXHR, textStatus, errorThrown</span>) </span>{
+                    <span class="hljs-built_in">console</span>.error(jqXHR, textStatus, errorThrown);
+                }
+            );
+        })
+    </span><span class="hljs-tag">&lt;/<span class="hljs-title">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">head</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">body</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">id</span>=<span class="hljs-value">"title"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">body</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">html</span>&gt;</span></code></pre>
+<h2 id="header-development-resources">Development Resources <a class="permalink" href="#header-development-resources" aria-hidden="true">¶</a></h2>
+<p>Some resources that may be helpful during development.</p>
+<h3 id="header-api-browser">API Browser <a class="permalink" href="#header-api-browser" aria-hidden="true">¶</a></h3>
+<p>Easily browse the API with our <a href="/browser">API Browser</a>. It’s an easy way to find objects and their id’s.</p>
+<h3 id="header-php-webling-client">PHP Webling Client <a class="permalink" href="#header-php-webling-client" aria-hidden="true">¶</a></h3>
+<p>A lightweight Webling API wrapper: <a href="https://github.com/usystems/webling-api-php">github.com/usystems/webling-api-php</a></p>
+<p>Install this <a href="https://packagist.org/packages/usystems/webling-api-php">package</a> with <a href="https://getcomposer.org/">Composer</a>:</p>
+<pre><code><span class="hljs-label">composer</span> <span class="hljs-preprocessor">require</span> usystems/webling-api-php</code></pre>
+<p>The library simplifies Webling API requests:</p>
+<pre><code class="language-php"><span class="hljs-variable">$api</span> = <span class="hljs-keyword">new</span> Webling\API\Client(<span class="hljs-string">'https://demo.webling.ch'</span>,<span class="hljs-string">'MY_APIKEY'</span>)
+<span class="hljs-variable">$response</span> = <span class="hljs-variable">$api</span>-&gt;get(<span class="hljs-string">'member/123'</span>)</code></pre>
+<p>See the <a href="https://github.com/usystems/webling-api-php">GitHub page</a> for more information.</p>
+<h3 id="header-code-examples">Code Examples <a class="permalink" href="#header-code-examples" aria-hidden="true">¶</a></h3>
+<p>Some code examples that use the API: <a href="https://github.com/usystems/webling-api-examples">github.com/usystems/webling-api-examples</a></p>
+<h3 id="header-symfony-bundle">Symfony Bundle <a class="permalink" href="#header-symfony-bundle" aria-hidden="true">¶</a></h3>
+<p>A third-party Symfony 2 Bundle, made by Terminal42: <a href="https://github.com/terminal42/webling-bundle">github.com/terminal42/webling-bundle</a></p>
+<h3 id="header-wordpress-plugin">WordPress Plugin <a class="permalink" href="#header-wordpress-plugin" aria-hidden="true">¶</a></h3>
+<p>A <a href="https://wordpress.org/plugins/webling/">WordPress Plugin</a> to create member lists and registration forms.</p>
+<h2 id="header-newsletter">Newsletter <a class="permalink" href="#header-newsletter" aria-hidden="true">¶</a></h2>
+<p>We have an API newsletter to notify users about changes. <a href="http://eepurl.com/cxT6Fn">Sign up here</a></p>
+<h2 id="header-changelog">Changelog <a class="permalink" href="#header-changelog" aria-hidden="true">¶</a></h2>
+<p>Breaking Changes are listed here.</p>
+<p><strong>Release 08-2025</strong></p>
+<p>In anticipation of the upcoming VAT and split-entry integration, the following changes have been made to entries and entrygroups:</p>
+<ul>
+<li>
+<p>Moved property <code>entryid</code> from <code>/entry</code> to <code>/entrygroup</code></p>
+</li>
+<li>
+<p>Moved property <code>receipt</code> from <code>/entry</code> to <code>/entrygroup</code></p>
+</li>
+<li>
+<p>Moved property <code>receiptfile</code> from <code>/entry</code> to <code>/entrygroup</code></p>
+</li>
+<li>
+<p>Moved property <code>isEBill</code> from <code>/entry</code> to <code>/entrygroup</code></p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Temporary:</strong> The moved properties are currently still available in <code>/entry</code> as a transparent read/write proxy object, but will be removed in future release.</p>
+</blockquote>
+<p><strong>Release 08-2022</strong></p>
+<ul>
+<li>Fix: Empty objects of links, children and definitions now return an empty object <code>{}</code> instead of an empty array <code>[]</code></li>
+</ul>
+<p><strong>Release 11-2021</strong></p>
+<ul>
+<li><code>/debitor</code>: added <code>date</code> property which is now used as the general invoice date.</li>
+</ul>
+<p><strong>Release 03-2021</strong></p>
+<p>Debitors can now have multiple revenues (Rechnungsposten).</p>
+<ul>
+<li>
+<p><code>/debitor</code>: added <code>title</code> property which is now used as the general invoice title</p>
+</li>
+<li>
+<p><code>/debitor</code>: added <code>invoiceitems</code> property to store the order of invoice items</p>
+</li>
+</ul>
+<p><strong>Release 01-2021</strong></p>
+<p>Debitors can now be written off (ausbuchen).</p>
+<ul>
+<li>
+<p><code>/debitor</code>: added a third split <code>writeoff</code> for the writeoff entries</p>
+</li>
+<li>
+<p><code>/debitor</code>: added <code>writeoffamount</code> with the written off amount of the debitor</p>
+</li>
+</ul>
+<p><strong>Release 12-2020</strong></p>
+<p>The object <code>costcentertemplate</code> has been removed, as it was never used in the Webling UI.</p>
+<p><strong>Release 11-2019</strong></p>
+<p>Debitorcategories are now children of the periodgroup.</p>
+<p>This means: debitorcategories are available in all periods
+of the periodgroup and do not need to be created if a new period is created. The structure of the following endpoints
+are affected:</p>
+<ul>
+<li>
+<p><code>/debitorcategory</code>: the parents of the debitorcategories are now periodgroups</p>
+</li>
+<li>
+<p><code>/period</code>: the period no longer has children of the type debitorcategory</p>
+</li>
+<li>
+<p><code>/periodgroup</code>: the periodgroup now has children of the type debitorcategory</p>
+</li>
+</ul>
+<p><strong>Release 07-2017</strong></p>
+<ul>
+<li>Website features are removed from the API by default. They are only present if the website is enabled.
+<ul>
+<li><code>/apikey</code> and <code>/user</code>: property <code>webaccess</code> removed</li>
+<li><code>/quota</code>: property <code>web</code> removed</li>
+</ul>
+</li>
+</ul>
+<p><strong>Release 06-2017</strong></p>
+<ul>
+<li>
+<p>Document contents URL has changed.
+Old: <code>/document/{id}/{filename}.{extension}</code>
+New: <code>/document/{id}/file/{filename}.{extension}</code></p>
+</li>
+<li>
+<p>Some changes to the search Query Language:</p>
+<ul>
+<li>The filter query param is now <code>?filter=&lt;your_query&gt;</code> instead of <code>?query=&lt;your_query&gt;</code></li>
+<li>Most EBNF features are now supported</li>
+<li>Global <code>&quot;NOT&quot;</code> Operator introduced. The old syntax <code>&quot;IS NOT&quot;</code> and <code>&quot;NOT LIKE&quot;</code> and <code>&quot;NOT IN&quot;</code> is not supported anymore</li>
+<li>Operator <code>&quot;START WITH&quot;</code> has been removed, use <code>&quot;FILTER&quot;</code> instead</li>
+<li>Properties containing special characters must now be enclosed by backticks instead of quotes.
+Old: <code>&quot;Zweiter Name&quot; = &quot;Meier&quot;</code>
+New: <code>`Zweiter Name` = &quot;Meier&quot;</code></li>
+<li>Properties can now be used on the left and the right side of a comparison. Example: <code>`Vorname` = `Nachname`</code></li>
+<li>The special property <code>$type</code> has been removed</li>
+</ul>
+</li>
+<li>
+<p>Changed and improved the sorting options. Old query params were <code>?sort=Vorname&amp;direction=ASC</code>, the new param is <code>?order=Vorname ASC, Nachname DESC</code>. Multiple sort fields are now possible.</p>
+</li>
+<li>
+<p>The unofficial finance endpoints have changed due to a large internal refactoring</p>
+</li>
+</ul>
+</section>

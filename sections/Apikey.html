@@ -1,0 +1,95 @@
+<section id="apikey" class="resource-group"><h2 class="group-heading">Apikey <a href="#apikey" class="permalink">&para;</a></h2><p>Only administrators have access to the <code>/apikey</code> endpoints.</p>
+<div id="apikey-apikey-list" class="resource"><h3 class="resource-heading">Apikey List <a href="#apikey-apikey-list" class="permalink">&nbsp;&para;</a></h3><div id="apikey-apikey-list-get" class="action get"><h4 class="action-heading"><div class="name">Get Apikey List</div><a href="#apikey-apikey-list-get" class="method get">GET</a><code class="uri">/apikey{?filter,order,format}</code></h4><p>Lists all available apikey IDs.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/apikey?<span class="hljs-attribute">filter=</span><span class="hljs-literal"></span>&<span class="hljs-attribute">order=</span><span class="hljs-literal">title ASC</span>&<span class="hljs-attribute">format=</span><span class="hljs-literal"></span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>filter</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Filter the list using the <a href="#header-query-language">Query Language</a></p>
+</dd><dt>order</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>title ASC</span></span><p>Sort the apikey list by property and direction</p>
+</dd><dt>format</dt><dd><code>string</code>&nbsp;<span>(optional)</span>&nbsp;<p>Specify <code>format=full</code> to get the full object instead of a list of IDs</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">objects</span>": <span class="hljs-value">[
+    <span class="hljs-number">1812</span>,
+    <span class="hljs-number">1791</span>,
+    <span class="hljs-number">1793</span>,
+    <span class="hljs-number">1789</span>
+  ]
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div><div id="apikey-apikey-list-post" class="action post"><h4 class="action-heading"><div class="name">Create Apikey</div><a href="#apikey-apikey-list-post" class="method post">POST</a><code class="uri">/apikey</code></h4><p>Create an apikey</p>
+<p>Returns the ID of the newly created apikey.</p>
+<h4>Example URI</h4><div class="definition"><span class="method post">POST</span>&nbsp;<span class="uri"><span class="hostname"></span>/apikey</span></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>JSON Representation of the Apikey.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"apikey"</span></span>,
+  "<span class="hljs-attribute">readonly</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"Api Key"</span></span>,
+    "<span class="hljs-attribute">custommemberaccess</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">552</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span></span>,
+      "<span class="hljs-attribute">555</span>": <span class="hljs-value"><span class="hljs-string">"+r+w"</span></span>,
+      "<span class="hljs-attribute">558</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">customfinanceaccess</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">800</span>": <span class="hljs-value"><span class="hljs-string">"+r+w"</span></span>,
+      "<span class="hljs-attribute">1814</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">memberaccess</span>": <span class="hljs-value"><span class="hljs-string">"custom"</span></span>,
+    "<span class="hljs-attribute">financeaccess</span>": <span class="hljs-value"><span class="hljs-string">"custom"</span></span>,
+    "<span class="hljs-attribute">articleaccess</span>": <span class="hljs-value"><span class="hljs-string">"none"</span></span>,
+    "<span class="hljs-attribute">administrator</span>": <span class="hljs-value"><span class="hljs-literal">false</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">children</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">parents</span>": <span class="hljs-value">[]</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>201</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Body</h5><pre><code>1793</code></pre><div style="height: 1px;"></div></div></div></div></div><div id="apikey-apikey" class="resource"><h3 class="resource-heading">Apikey <a href="#apikey-apikey" class="permalink">&nbsp;&para;</a></h3><div id="apikey-apikey-get" class="action get"><h4 class="action-heading"><div class="name">Get Apikey</div><a href="#apikey-apikey-get" class="method get">GET</a><code class="uri">/apikey/{id}</code></h4><p>Get an apikey</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/apikey/<span class="hljs-attribute" title="id">1793</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1793</span></span><p>Apikey ID</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>JSON Representation of the Apikey.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"apikey"</span></span>,
+  "<span class="hljs-attribute">readonly</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"Api Key"</span></span>,
+    "<span class="hljs-attribute">custommemberaccess</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">552</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span></span>,
+      "<span class="hljs-attribute">555</span>": <span class="hljs-value"><span class="hljs-string">"+r+w"</span></span>,
+      "<span class="hljs-attribute">558</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">customfinanceaccess</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">800</span>": <span class="hljs-value"><span class="hljs-string">"+r+w"</span></span>,
+      "<span class="hljs-attribute">1814</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">memberaccess</span>": <span class="hljs-value"><span class="hljs-string">"custom"</span></span>,
+    "<span class="hljs-attribute">financeaccess</span>": <span class="hljs-value"><span class="hljs-string">"custom"</span></span>,
+    "<span class="hljs-attribute">articleaccess</span>": <span class="hljs-value"><span class="hljs-string">"none"</span></span>,
+    "<span class="hljs-attribute">administrator</span>": <span class="hljs-value"><span class="hljs-literal">false</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">children</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">parents</span>": <span class="hljs-value">[]</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{}
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div><div id="apikey-apikey-put" class="action put"><h4 class="action-heading"><div class="name">Update Apikey</div><a href="#apikey-apikey-put" class="method put">PUT</a><code class="uri">/apikey/{id}</code></h4><p>Update an apikey</p>
+<h4>Example URI</h4><div class="definition"><span class="method put">PUT</span>&nbsp;<span class="uri"><span class="hostname"></span>/apikey/<span class="hljs-attribute" title="id">1793</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1793</span></span><p>Apikey ID</p>
+</dd></dl></div><div class="title"><strong>Request</strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><div class="description"><p>JSON Representation of the Apikey.</p>
+</div><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">type</span>": <span class="hljs-value"><span class="hljs-string">"apikey"</span></span>,
+  "<span class="hljs-attribute">readonly</span>": <span class="hljs-value"><span class="hljs-literal">false</span></span>,
+  "<span class="hljs-attribute">properties</span>": <span class="hljs-value">{
+    "<span class="hljs-attribute">title</span>": <span class="hljs-value"><span class="hljs-string">"Api Key"</span></span>,
+    "<span class="hljs-attribute">custommemberaccess</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">552</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span></span>,
+      "<span class="hljs-attribute">555</span>": <span class="hljs-value"><span class="hljs-string">"+r+w"</span></span>,
+      "<span class="hljs-attribute">558</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">customfinanceaccess</span>": <span class="hljs-value">{
+      "<span class="hljs-attribute">800</span>": <span class="hljs-value"><span class="hljs-string">"+r+w"</span></span>,
+      "<span class="hljs-attribute">1814</span>": <span class="hljs-value"><span class="hljs-string">"+r"</span>
+    </span>}</span>,
+    "<span class="hljs-attribute">memberaccess</span>": <span class="hljs-value"><span class="hljs-string">"custom"</span></span>,
+    "<span class="hljs-attribute">financeaccess</span>": <span class="hljs-value"><span class="hljs-string">"custom"</span></span>,
+    "<span class="hljs-attribute">articleaccess</span>": <span class="hljs-value"><span class="hljs-string">"none"</span></span>,
+    "<span class="hljs-attribute">administrator</span>": <span class="hljs-value"><span class="hljs-literal">false</span>
+  </span>}</span>,
+  "<span class="hljs-attribute">children</span>": <span class="hljs-value">{}</span>,
+  "<span class="hljs-attribute">parents</span>": <span class="hljs-value">[]</span>,
+  "<span class="hljs-attribute">links</span>": <span class="hljs-value">{}
+</span>}</code></pre><div style="height: 1px;"></div></div></div><div class="title"><strong>Response&nbsp;&nbsp;<code>204</code></strong></div></div><div id="apikey-apikey-delete" class="action delete"><h4 class="action-heading"><div class="name">Delete Apikey</div><a href="#apikey-apikey-delete" class="method delete">DELETE</a><code class="uri">/apikey/{id}</code></h4><p>Delete an apikey</p>
+<h4>Example URI</h4><div class="definition"><span class="method delete">DELETE</span>&nbsp;<span class="uri"><span class="hostname"></span>/apikey/<span class="hljs-attribute" title="id">1793</span></span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1793</span></span><p>Apikey ID</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>204</code></strong></div></div></div><div id="apikey-last-used" class="resource"><h3 class="resource-heading">Last used <a href="#apikey-last-used" class="permalink">&nbsp;&para;</a></h3><div id="apikey-last-used-get" class="action get"><h4 class="action-heading"><div class="name">Apikey last used</div><a href="#apikey-last-used-get" class="method get">GET</a><code class="uri">/apikey/{id}/lastused</code></h4><p>Get info when an apikey was used the last time.</p>
+<h4>Example URI</h4><div class="definition"><span class="method get">GET</span>&nbsp;<span class="uri"><span class="hostname"></span>/apikey/<span class="hljs-attribute" title="id">1791</span>/lastused</span></div><div class="title"><strong>URI Parameters</strong><div class="collapse-button show"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><dl class="inner"><dt>id</dt><dd><code>number</code>&nbsp;<span class="required">(required)</span>&nbsp;<span class="text-muted example"><strong>Example:&nbsp;</strong><span>1791</span></span><p>Apikey ID</p>
+</dd></dl></div><div class="title"><strong>Response&nbsp;&nbsp;<code>200</code></strong><div class="collapse-button"><span class="close">Hide</span><span class="open">Show</span></div></div><div class="collapse-content"><div class="inner"><h5>Headers</h5><pre><code><span class="hljs-attribute">Content-Type</span>: <span class="hljs-string">application/json</span></code></pre><div style="height: 1px;"></div><h5>Body</h5><pre><code>{
+  "<span class="hljs-attribute">timestamp</span>": <span class="hljs-value"><span class="hljs-string">"2015-12-28 11:39:42"</span></span>,
+  "<span class="hljs-attribute">ip</span>": <span class="hljs-value"><span class="hljs-string">"192.168.19.1"</span>
+</span>}</code></pre><div style="height: 1px;"></div></div></div></div></div></section>
