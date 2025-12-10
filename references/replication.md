@@ -153,8 +153,8 @@ If API key permissions are modified:
 
 Design for <50 requests/minute:
 - Use `/replicate` to detect changes before fetching
-- Batch fetch with multi-get: `/member/504,505,506`
-- Use `format=full` to get all data in one request
+- For small batches (<50 IDs): `/member/504,505,506`
+- For bulk operations: Use `format=full` with filters to avoid URL length limits
 - Cache aggressively, update only changed objects
 
 ---
