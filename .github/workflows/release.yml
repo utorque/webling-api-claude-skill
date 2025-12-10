@@ -2,14 +2,18 @@ name: Package and Release Skill
 
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       version:
         description: 'Version tag (e.g., v1.0.0)'
-        required: true
-        default: 'v1.0.0'
+        required: false
+        default: ''
+      bump:
+        description: 'Version bump type (major, minor, patch)'
+        required: false
+        default: 'patch'
 
 jobs:
   package-and-release:
@@ -20,19 +24,78 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history and tags
       
-      - name: Get version
+      - name: Get or increment version
         id: version
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION="${{ github.event.inputs.version }}"
-          else
-            VERSION="${GITHUB_REF#refs/tags/}"
+          # Fetch all tags
+          git fetch --tags --quiet
+
+          # Get the latest tag, default to v0.0.0 if none exists
+          LATEST_TAG=$(git tag -l 'v*' | sort -V | tail -n1)
+          if [ -z "$LATEST_TAG" ]; then
+            LATEST_TAG="v0.0.0"
           fi
+
+          echo "Latest tag: $LATEST_TAG"
+
+          # If manual dispatch with explicit version, use it
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ github.event.inputs.version }}" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+            echo "Using manual version: $VERSION"
+          else
+            # Parse version (remove 'v' prefix)
+            VERSION_NUM="${LATEST_TAG#v}"
+            IFS='.' read -r -a VERSION_PARTS <<< "$VERSION_NUM"
+            MAJOR="${VERSION_PARTS[0]:-0}"
+            MINOR="${VERSION_PARTS[1]:-0}"
+            PATCH="${VERSION_PARTS[2]:-0}"
+
+            # Determine bump type
+            BUMP_TYPE="${{ github.event.inputs.bump }}"
+            if [ -z "$BUMP_TYPE" ]; then
+              BUMP_TYPE="patch"
+            fi
+
+            # Increment version
+            case "$BUMP_TYPE" in
+              major)
+                MAJOR=$((MAJOR + 1))
+                MINOR=0
+                PATCH=0
+                ;;
+              minor)
+                MINOR=$((MINOR + 1))
+                PATCH=0
+                ;;
+              patch)
+                PATCH=$((PATCH + 1))
+                ;;
+            esac
+
+            VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+            echo "Auto-incremented version ($BUMP_TYPE): $VERSION"
+          fi
+
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Version: $VERSION"
-      
+          echo "Final version: $VERSION"
+
+      - name: Check if tag exists
+        id: tag_check
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          if git rev-parse "$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists. Skipping release creation."
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Tag $VERSION does not exist. Proceeding with release."
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Validate skill structure
+        if: steps.tag_check.outputs.exists == 'false'
         run: |
           echo "Validating skill structure..."
           
@@ -63,6 +126,7 @@ jobs:
           echo "Skill structure validated successfully"
       
       - name: Package skill
+        if: steps.tag_check.outputs.exists == 'false'
         run: |
           SKILL_NAME="webling-api"
           OUTPUT_FILE="${SKILL_NAME}.skill"
@@ -82,13 +146,30 @@ jobs:
           ls -la "$OUTPUT_FILE"
       
       - name: Generate release notes
+        if: steps.tag_check.outputs.exists == 'false'
         id: notes
         run: |
-          cat << 'EOF' > release_notes.md
-          ## Webling API Skill
-          
-          This skill provides comprehensive guidance for interacting with the Webling API.
-          
+          VERSION="${{ steps.version.outputs.version }}"
+
+          # Get the previous tag for comparison
+          PREV_TAG=$(git tag -l 'v*' | sort -V | tail -n2 | head -n1)
+
+          # Generate changelog
+          echo "## Webling API Skill ${VERSION}" > release_notes.md
+          echo "" >> release_notes.md
+          echo "This skill provides comprehensive guidance for interacting with the Webling API." >> release_notes.md
+          echo "" >> release_notes.md
+
+          # Add changes since last release
+          if [ -n "$PREV_TAG" ] && [ "$PREV_TAG" != "$VERSION" ]; then
+            echo "### Changes since ${PREV_TAG}" >> release_notes.md
+            echo "" >> release_notes.md
+            git log ${PREV_TAG}..HEAD --pretty=format:"- %s (%h)" --no-merges >> release_notes.md
+            echo "" >> release_notes.md
+            echo "" >> release_notes.md
+          fi
+
+          cat << 'EOF' >> release_notes.md
           ### Included References
           - **members.md** - Member and membergroup endpoints
           - **finance.md** - Debitors, entries, accounts, periods, costcenters
@@ -99,15 +180,19 @@ jobs:
           - **letters.md** - Letters and letter PDFs
           - **replication.md** - Change tracking and sync
           - **query-language.md** - Complete query language reference
-          
+
           ### Installation
           Upload the `.skill` file to your Claude environment.
-          
+
           ### Usage
           The skill automatically triggers when working with Webling API operations.
           EOF
+
+          echo "Release notes generated:"
+          cat release_notes.md
       
       - name: Create Release
+        if: steps.tag_check.outputs.exists == 'false'
         uses: softprops/action-gh-release@v1
         with:
           name: Webling API Skill ${{ steps.version.outputs.version }}
@@ -116,5 +201,6 @@ jobs:
           files: webling-api.skill
           draft: false
           prerelease: false
+          make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
