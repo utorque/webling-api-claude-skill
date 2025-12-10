@@ -1,8 +1,28 @@
 # Admin API Reference
 
+> **Data Model Reference**: See `webling_data_graphviz.txt` for complete admin object definitions including user, usergroup, and apikey.
+
 **Note**: Only administrators have access to `/user`, `/usergroup`, and `/apikey` endpoints.
 
+## Admin Object Hierarchy
+
+```
+usergroup (hierarchy, defines roles)
+  └── user
+
+apikey (standalone, no hierarchy)
+```
+
 ## User
+
+**Object Type**: `user`
+**Parent**: `usergroup`
+**Links**: comment, post, letter (as sender/owner), email (as sender/owner)
+
+**Properties** (from graphviz):
+- `title` [text] - Display name
+- `email` [text] - Email address
+- `avatar` [image] - Profile picture
 
 ### Access Levels
 

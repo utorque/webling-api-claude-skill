@@ -1,11 +1,41 @@
 # Letters API Reference
 
+> **Data Model Reference**: See `webling_data_graphviz.txt` for complete letter object definitions including letter, letterpdf, letterimage, email, and emailsent.
+
 **Note**: These endpoints are only available for letters created with the new editor.
+
+## Letter Object Hierarchy
+
+```
+letter (standalone)
+  ├── letterpdf → links to member or debitor
+  └── letterimage (embedded images)
+
+email (standalone)
+  ├── emailsent → links to member or debitor
+  ├── emailattachment
+  └── emailimage
+```
 
 ## Letter
 
 Letters are used for writing and sending letters. They can be printed or sent by email.
 Once a PDF is generated, the letter becomes immutable with state "sent".
+
+**Object Type**: `letter`
+**Parent**: None (root object)
+**Children**: letterpdf, letterimage
+**Links**: member, debitor, sender (user), owners (user), email, file
+
+**Properties** (from graphviz):
+- `title` [text] - Letter title
+- `lettertype` [enum] - `"member"` or `"debitor"`
+- `state` [enum] - Letter state (e.g., `"sent"`)
+- `sentat` [timestamp] - When letter was sent
+- `sentby` [text] - Who sent it
+- `data` [json] - Letter template configuration
+- `isattachment` [bool] - Whether it's an attachment
+- `preview` [image] - Preview image
 
 **Not all actions available via API**:
 - Email sending - not available

@@ -1,5 +1,7 @@
 # Core API Reference
 
+> **Data Model Reference**: Core endpoints (`/config`, `/definition`, `/quota`, `/setting`) provide system-level information and configuration. See also `settings` object type in `webling_data_graphviz.txt`.
+
 ## Config
 
 ### Get Config Values
