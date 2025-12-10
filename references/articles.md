@@ -1,8 +1,28 @@
 # Articles API Reference
 
+> **Data Model Reference**: See `webling_data_graphviz.txt` for complete article object definitions including article and articlegroup.
+
+## Article Object Hierarchy
+
+```
+articlegroup (hierarchy)
+  └── article
+```
+
 ## Article
 
 An article is a material item. Always a child of an articlegroup.
+
+**Object Type**: `article`
+**Parent**: `articlegroup`
+**Links**: None
+
+**Properties** (from graphviz):
+- `title` [text] - Article name
+- `description` [longtext] - Description
+- `place` [text] - Storage location
+- `price` [numeric] - Price
+- `quantity` [int] - Stock quantity
 
 ### List Articles
 ```

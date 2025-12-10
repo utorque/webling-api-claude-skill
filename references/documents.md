@@ -1,8 +1,57 @@
 # Documents API Reference
 
+> **Data Model Reference**: See `webling_data_graphviz.txt` for complete document object definitions including document and documentgroup.
+
+## Document Object Hierarchy
+
+```
+documentgroup (hierarchy, can be nested)
+  └── document
+```
+
 ## Document
 
 A document is equivalent to a file on the filesystem.
+
+**Object Type**: `document`
+**Parent**: `documentgroup`
+**Links**: None (standalone files)
+
+**Properties** (from graphviz):
+- `title` [text] - Document title
+- `description` [longtext] - Description
+- `file` [file] - The actual file with metadata (href, size, ext, mime)
+- `href` [text] - Download URL
+- `size` [int] - File size in bytes
+- `lastmodified` [timestamp] - Last modification time
+- `isProtected` [bool] - Whether file is password protected
+- `protectedBy` [text] - Protection type
+
+**Response Structure**:
+```json
+{
+  "type": "document",
+  "id": 1805,
+  "meta": {
+    "created": "2024-01-15 10:00:00",
+    "createuser": { "label": "Admin", "type": "user" }
+  },
+  "readonly": false,
+  "properties": {
+    "title": "Annual Report",
+    "description": "Financial report for 2024",
+    "file": {
+      "href": "/document/1805/file/report.pdf",
+      "size": 2048576,
+      "ext": "pdf",
+      "mime": "application/pdf"
+    }
+  },
+  "parents": [1806],
+  "children": {},
+  "links": {}
+}
+```
 
 ### List Documents
 ```

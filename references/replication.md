@@ -1,5 +1,7 @@
 # Track Changes / Replicate API Reference
 
+> **Note**: These endpoints (`/replicate`, `/changes`) provide change tracking for efficient synchronization. They return object IDs that can be fetched using standard endpoints. See `webling_data_graphviz.txt` for object type definitions.
+
 ## How It Works
 
 Every change in Webling creates a new revision with an incrementing revision ID. Use `/replicate` or `/changes` to sync only changed data.
