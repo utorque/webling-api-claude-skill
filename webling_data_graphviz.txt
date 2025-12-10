@@ -1,0 +1,1345 @@
+digraph Webling {
+	graph [rankdir=LR]
+	node [fontname="Helvetica,Arial,sans-serif" shape=record style=filled fillcolor="#EDF2F7" fontcolor="#2D3748" color="#718096"]
+	edge [fontname="Helvetica,Arial,sans-serif"]
+	datatype_account [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_account"> <b>account</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ amount [numeric]</td> </tr>
+					<tr> <td align="left">+ budget [numeric]</td> </tr>
+					<tr> <td align="left">+ openingentry [numeric]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_comment">&#128279; comment </td> </tr>
+					<tr> <td align="left" port="link_accounttemplate">&#128279; accounttemplate </td> </tr>
+					<tr> <td align="left" port="link_entrygroup">&#128279; entrygroup </td> </tr>
+					<tr> <td align="left" port="link_entry">&#128279; entry </td> </tr>
+					<tr> <td align="left" port="link_vat">&#128279; vat </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_account">parents: accountgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_accountgroup [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_accountgroup"> <b>accountgroup</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ type [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_accountgrouptemplate">&#128279; accountgrouptemplate </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_accountgroup">parents: period</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_accountgrouptemplate [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_accountgrouptemplate"> <b>accountgrouptemplate</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ type [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_accountgroup">&#128279; accountgroup </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_accountgrouptemplate">parents: periodchain</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_accounttemplate [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_accounttemplate"> <b>accounttemplate</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ flag [enum]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_account">&#128279; account </td> </tr>
+					<tr> <td align="left" port="link_bankaccount">&#128279; bankaccount </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_accounttemplate">parents: accountgrouptemplate</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_apikey [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_apikey"> <b>apikey</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ administrator [bool]</td> </tr>
+					<tr> <td align="left">+ custommemberaccess [permissions]</td> </tr>
+					<tr> <td align="left">+ customfinanceaccess [permissions]</td> </tr>
+					<tr> <td align="left">+ customcalendaraccess [permissions]</td> </tr>
+					<tr> <td align="left">+ memberaccess [enum]</td> </tr>
+					<tr> <td align="left">+ financeaccess [enum]</td> </tr>
+					<tr> <td align="left">+ calendaraccess [enum]</td> </tr>
+					<tr> <td align="left">+ articleaccess [enum]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_article [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_article"> <b>article</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ description [longtext]</td> </tr>
+					<tr> <td align="left">+ place [text]</td> </tr>
+					<tr> <td align="left">+ price [numeric]</td> </tr>
+					<tr> <td align="left">+ quantity [int]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_article">parents: articlegroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_articlegroup [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_articlegroup"> <b>articlegroup</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_attendee [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_attendee"> <b>attendee</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ state [enum]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_attendee">parents: presencelist</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_bankaccount [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_bankaccount"> <b>bankaccount</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ balance [numeric]</td> </tr>
+					<tr> <td align="left">+ iban [text]</td> </tr>
+					<tr> <td align="left">+ lastSync [timestamp]</td> </tr>
+					<tr> <td align="left">+ accounttype [enum]</td> </tr>
+					<tr> <td align="left">+ iconUrl [text]</td> </tr>
+					<tr> <td align="left">+ externalId [text]</td> </tr>
+					<tr> <td align="left">+ data [json]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_accounttemplate">&#128279; accounttemplate </td> </tr>
+					<tr> <td align="left" port="link_payment">&#128279; payment </td> </tr>
+					<tr> <td align="left" port="link_saltedgeconnection">&#128279; saltedgeconnection </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_bankaccount">parents: periodchain</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_calendar [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_calendar"> <b>calendar</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ color [text]</td> </tr>
+					<tr> <td align="left">+ isPublic [bool]</td> </tr>
+					<tr> <td align="left">+ publicHash [text]</td> </tr>
+					<tr> <td align="left">+ icsHash [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_membergroup">&#128279; membergroup </td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_calendarevent [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_calendarevent"> <b>calendarevent</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ description [longtext]</td> </tr>
+					<tr> <td align="left">+ place [text]</td> </tr>
+					<tr> <td align="left">+ begin [timestamp]</td> </tr>
+					<tr> <td align="left">+ end [timestamp]</td> </tr>
+					<tr> <td align="left">+ duration [int]</td> </tr>
+					<tr> <td align="left">+ isAllDay [bool]</td> </tr>
+					<tr> <td align="left">+ isRecurring [bool]</td> </tr>
+					<tr> <td align="left">+ status [enum]</td> </tr>
+					<tr> <td align="left">+ recurrencePattern [text]</td> </tr>
+					<tr> <td align="left">+ enableParticipantSignup [bool]</td> </tr>
+					<tr> <td align="left">+ enableParticipantMaybeState [bool]</td> </tr>
+					<tr> <td align="left">+ isSignupBinding [bool]</td> </tr>
+					<tr> <td align="left">+ maxParticipants [int]</td> </tr>
+					<tr> <td align="left">+ signedupParticipants [int]</td> </tr>
+					<tr> <td align="left">+ signupAllowedUntil [timestamp]</td> </tr>
+					<tr> <td align="left">+ doAutoAcceptParticipants [bool]</td> </tr>
+					<tr> <td align="left">+ questionSchema [json]</td> </tr>
+					<tr> <td align="left">+ showParticipationsInPortal [bool]</td> </tr>
+					<tr> <td align="left">+ showAllAnswersInPortal [bool]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_presencelist">&#128279; presencelist </td> </tr>
+					<tr> <td align="left" port="link_file">&#128279; file </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_calendarevent">parents: calendar</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_comment [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_comment"> <b>comment</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ text [longtext]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_user">&#128279; user </td> </tr>
+					<tr> <td align="left" port="link_account">&#128279; account </td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_costcenter [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_costcenter"> <b>costcenter</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_entry">&#128279; entry </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_costcenter">parents: period</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_debitor [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_debitor"> <b>debitor</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [longtext]</td> </tr>
+					<tr> <td align="left">+ comment [longtext]</td> </tr>
+					<tr> <td align="left">+ date [date]</td> </tr>
+					<tr> <td align="left">+ invoiceitems [json]</td> </tr>
+					<tr> <td align="left">+ address [longtext]</td> </tr>
+					<tr> <td align="left">+ remainingamount [numeric]</td> </tr>
+					<tr> <td align="left">+ totalamount [numeric]</td> </tr>
+					<tr> <td align="left">+ paidamount [numeric]</td> </tr>
+					<tr> <td align="left">+ writeoffamount [numeric]</td> </tr>
+					<tr> <td align="left">+ duedate [date]</td> </tr>
+					<tr> <td align="left">+ debitorid [autoincrement]</td> </tr>
+					<tr> <td align="left">+ state [enum]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+					<tr> <td align="left" port="link_email">&#128279; email </td> </tr>
+					<tr> <td align="left" port="link_emailsent">&#128279; emailsent </td> </tr>
+					<tr> <td align="left" port="link_letter">&#128279; letter </td> </tr>
+					<tr> <td align="left" port="link_letterpdf">&#128279; letterpdf </td> </tr>
+					<tr> <td align="left" port="link_comment">&#128279; comment </td> </tr>
+					<tr> <td align="left" port="link_debitorcategory">&#128279; debitorcategory </td> </tr>
+					<tr> <td align="left" port="link_paymentrecord">&#128279; paymentrecord [payment]</td> </tr>
+					<tr> <td align="left" port="link_revenue">&#128279; revenue [entry]</td> </tr>
+					<tr> <td align="left" port="link_payment">&#128279; payment [entry]</td> </tr>
+					<tr> <td align="left" port="link_writeoff">&#128279; writeoff [entry]</td> </tr>
+					<tr> <td align="left" port="link_entry">&#128279; entry </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_debitor">parents: period</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_debitorcategory [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_debitorcategory"> <b>debitorcategory</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_debitorcategory">parents: periodgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_document [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_document"> <b>document</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ description [longtext]</td> </tr>
+					<tr> <td align="left">+ isProtected [bool]</td> </tr>
+					<tr> <td align="left">+ protectedBy [text]</td> </tr>
+					<tr> <td align="left">+ file [file]</td> </tr>
+					<tr> <td align="left">+ size [int]</td> </tr>
+					<tr> <td align="left">+ lastmodified [timestamp]</td> </tr>
+					<tr> <td align="left">+ href [text]</td> </tr>
+					<tr> <td align="left">+ title [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_document">parents: documentgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_documentgroup [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_documentgroup"> <b>documentgroup</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_usergroup">&#128279; usergroup </td> </tr>
+					<tr> <td align="left" port="link_user">&#128279; user </td> </tr>
+					<tr> <td align="left" port="link_page">&#128279; page </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_documentgroup">parents: documentgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_domain [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_domain"> <b>domain</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ emailverified [bool]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_email [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_email"> <b>email</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ subject [text]</td> </tr>
+					<tr> <td align="left">+ body [longtext]</td> </tr>
+					<tr> <td align="left">+ paperletter [longtext]</td> </tr>
+					<tr> <td align="left">+ fromName [text]</td> </tr>
+					<tr> <td align="left">+ fromEmail [text]</td> </tr>
+					<tr> <td align="left">+ to [longtext]</td> </tr>
+					<tr> <td align="left">+ cc [longtext]</td> </tr>
+					<tr> <td align="left">+ bcc [longtext]</td> </tr>
+					<tr> <td align="left">+ emailtype [enum]</td> </tr>
+					<tr> <td align="left">+ state [enum]</td> </tr>
+					<tr> <td align="left">+ sentat [timestamp]</td> </tr>
+					<tr> <td align="left">+ sentby [text]</td> </tr>
+					<tr> <td align="left">+ data [json]</td> </tr>
+					<tr> <td align="left">+ isPrivate [bool]</td> </tr>
+					<tr> <td align="left">+ isJoined [bool]</td> </tr>
+					<tr> <td align="left">+ emailFields [json]</td> </tr>
+					<tr> <td align="left">+ senderField [text]</td> </tr>
+					<tr> <td align="left">+ receiptCount [int]</td> </tr>
+					<tr> <td align="left">+ preview [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_sender">&#128279; sender [user]</td> </tr>
+					<tr> <td align="left" port="link_owners">&#128279; owners [user]</td> </tr>
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_letter">&#128279; letter </td> </tr>
+					<tr> <td align="left" port="link_rnwform">&#128279; rnwform </td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_emailattachment [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_emailattachment"> <b>emailattachment</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ file [file]</td> </tr>
+					<tr> <td align="left">+ title [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_emailattachment">parents: email</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_emailimage [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_emailimage"> <b>emailimage</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ image [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_emailimage">parents: email</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_emailsent [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_emailsent"> <b>emailsent</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ subject [text]</td> </tr>
+					<tr> <td align="left">+ to [text]</td> </tr>
+					<tr> <td align="left">+ placeholders [longtext]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_letterpdf">&#128279; letterpdf </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_emailsent">parents: email</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_emotion [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_emotion"> <b>emotion</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ emotion [enum]</td> </tr>
+					<tr> <td align="left">+ memberlabel [text]</td> </tr>
+					<tr> <td align="left">+ memberimage [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_emotion">parents: post</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_entry [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_entry"> <b>entry</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ amount [numeric]</td> </tr>
+					<tr> <td align="left">+ skrSphere [int]</td> </tr>
+					<tr> <td align="left">+ receipt [text]</td> </tr>
+					<tr> <td align="left">+ entryid [int]</td> </tr>
+					<tr> <td align="left">+ isEBill [enum]</td> </tr>
+					<tr> <td align="left">+ receiptfile [binary]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_debit">&#128279; debit [account]</td> </tr>
+					<tr> <td align="left" port="link_credit">&#128279; credit [account]</td> </tr>
+					<tr> <td align="left" port="link_account">&#128279; account </td> </tr>
+					<tr> <td align="left" port="link_costcenter">&#128279; costcenter </td> </tr>
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_payment">&#128279; payment </td> </tr>
+					<tr> <td align="left" port="link_vat">&#128279; vat </td> </tr>
+					<tr> <td align="left" port="link_entry">&#128279; entry </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_entry">parents: entrygroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_entrygroup [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_entrygroup"> <b>entrygroup</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ date [date]</td> </tr>
+					<tr> <td align="left">+ receipt [text]</td> </tr>
+					<tr> <td align="left">+ entryid [int]</td> </tr>
+					<tr> <td align="left">+ receiptfile [binary]</td> </tr>
+					<tr> <td align="left">+ isEBill [bool]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_account">&#128279; account </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_entrygroup">parents: period</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_file [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_file"> <b>file</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ file [binary]</td> </tr>
+					<tr> <td align="left">+ publicHash [text]</td> </tr>
+					<tr> <td align="left">+ state [enum]</td> </tr>
+					<tr> <td align="left">+ expiresAt [timestamp]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_page">&#128279; page </td> </tr>
+					<tr> <td align="left" port="link_letter">&#128279; letter </td> </tr>
+					<tr> <td align="left" port="link_calendarevent">&#128279; calendarevent </td> </tr>
+					<tr> <td align="left" port="link_memberform">&#128279; memberform </td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_letter [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_letter"> <b>letter</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ lettertype [enum]</td> </tr>
+					<tr> <td align="left">+ state [enum]</td> </tr>
+					<tr> <td align="left">+ sentat [timestamp]</td> </tr>
+					<tr> <td align="left">+ sentby [text]</td> </tr>
+					<tr> <td align="left">+ data [json]</td> </tr>
+					<tr> <td align="left">+ isattachment [bool]</td> </tr>
+					<tr> <td align="left">+ preview [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_sender">&#128279; sender [user]</td> </tr>
+					<tr> <td align="left" port="link_owners">&#128279; owners [user]</td> </tr>
+					<tr> <td align="left" port="link_email">&#128279; email </td> </tr>
+					<tr> <td align="left" port="link_file">&#128279; file </td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_letterimage [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_letterimage"> <b>letterimage</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ image [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_letterimage">parents: letter</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_letterpdf [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_letterpdf"> <b>letterpdf</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ pdf [file]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_emailsent">&#128279; emailsent </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_letterpdf">parents: letter</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_member [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_member"> <b>member</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ Mitglieder-ID [autoincrement]</td> </tr>
+					<tr> <td align="left">+ Vorname [text]</td> </tr>
+					<tr> <td align="left">+ Name [text]</td> </tr>
+					<tr> <td align="left">+ Strasse [text]</td> </tr>
+					<tr> <td align="left">+ PLZ [text]</td> </tr>
+					<tr> <td align="left">+ Ort [text]</td> </tr>
+					<tr> <td align="left">+ Telefon [text]</td> </tr>
+					<tr> <td align="left">+ Mobile [text]</td> </tr>
+					<tr> <td align="left">+ E-Mail [text]</td> </tr>
+					<tr> <td align="left">+ Lizenz [enum]</td> </tr>
+					<tr> <td align="left">+ Geschlecht [enum]</td> </tr>
+					<tr> <td align="left">+ Geburtstag [date]</td> </tr>
+					<tr> <td align="left">+ Mitgliederbild [image]</td> </tr>
+					<tr> <td align="left">+ Status [enum]</td> </tr>
+					<tr> <td align="left">+ Funktion [multienum]</td> </tr>
+					<tr> <td align="left">+ IBAN [text]</td> </tr>
+					<tr> <td align="left">+ Bemerkungen [longtext]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_comment">&#128279; comment </td> </tr>
+					<tr> <td align="left" port="link_email">&#128279; email </td> </tr>
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_emailsent">&#128279; emailsent </td> </tr>
+					<tr> <td align="left" port="link_letter">&#128279; letter </td> </tr>
+					<tr> <td align="left" port="link_letterpdf">&#128279; letterpdf </td> </tr>
+					<tr> <td align="left" port="link_attendee">&#128279; attendee </td> </tr>
+					<tr> <td align="left" port="link_participant">&#128279; participant </td> </tr>
+					<tr> <td align="left" port="link_postcomment">&#128279; postcomment </td> </tr>
+					<tr> <td align="left" port="link_emotion">&#128279; emotion </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_member">parents: membergroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_memberform [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_memberform"> <b>memberform</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ hash [text]</td> </tr>
+					<tr> <td align="left">+ fields [json]</td> </tr>
+					<tr> <td align="left">+ notificationEmail [text]</td> </tr>
+					<tr> <td align="left">+ confirmationHtml [longtext]</td> </tr>
+					<tr> <td align="left">+ submitButtonText [text]</td> </tr>
+					<tr> <td align="left">+ maxSignups [int]</td> </tr>
+					<tr> <td align="left">+ maxSignupsText [longtext]</td> </tr>
+					<tr> <td align="left">+ confirmationEmailEnabled [bool]</td> </tr>
+					<tr> <td align="left">+ confirmationEmailField [int]</td> </tr>
+					<tr> <td align="left">+ confirmationEmailReplyto [text]</td> </tr>
+					<tr> <td align="left">+ confirmationEmailSubject [text]</td> </tr>
+					<tr> <td align="left">+ confirmationEmailText [longtext]</td> </tr>
+					<tr> <td align="left">+ descriptionHtml [longtext]</td> </tr>
+					<tr> <td align="left">+ privacyCheckboxEnabled [bool]</td> </tr>
+					<tr> <td align="left">+ privacyCheckboxHtml [longtext]</td> </tr>
+					<tr> <td align="left">+ color [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_file">&#128279; file </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_memberform">parents: membergroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_membergroup [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_membergroup"> <b>membergroup</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ position [int]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_presencelist">&#128279; presencelist </td> </tr>
+					<tr> <td align="left" port="link_calendar">&#128279; calendar </td> </tr>
+					<tr> <td align="left" port="link_page">&#128279; page </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_membergroup">parents: membergroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_page [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_page"> <b>page</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ content [longtext]</td> </tr>
+					<tr> <td align="left">+ pageType [enum]</td> </tr>
+					<tr> <td align="left">+ memberListConfig [json]</td> </tr>
+					<tr> <td align="left">+ config [json]</td> </tr>
+					<tr> <td align="left">+ linkUrl [text]</td> </tr>
+					<tr> <td align="left">+ position [int]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_file">&#128279; file </td> </tr>
+					<tr> <td align="left" port="link_documentgroup">&#128279; documentgroup </td> </tr>
+					<tr> <td align="left" port="link_membergroup">&#128279; membergroup </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_page">parents: page</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_participant [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_participant"> <b>participant</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ state [enum]</td> </tr>
+					<tr> <td align="left">+ accepted [bool]</td> </tr>
+					<tr> <td align="left">+ acceptedAt [timestamp]</td> </tr>
+					<tr> <td align="left">+ invitedAt [timestamp]</td> </tr>
+					<tr> <td align="left">+ questions [json]</td> </tr>
+					<tr> <td align="left">+ memberlabel [text]</td> </tr>
+					<tr> <td align="left">+ memberimage [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_participant">parents: calendarevent</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_payment [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_payment"> <b>payment</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ ignored [bool]</td> </tr>
+					<tr> <td align="left">+ transactionid [text]</td> </tr>
+					<tr> <td align="left">+ referenceid [int]</td> </tr>
+					<tr> <td align="left">+ paymenttype [enum]</td> </tr>
+					<tr> <td align="left">+ customername [text]</td> </tr>
+					<tr> <td align="left">+ date [date]</td> </tr>
+					<tr> <td align="left">+ amount [numeric]</td> </tr>
+					<tr> <td align="left">+ data [json]</td> </tr>
+					<tr> <td align="left">+ status [text]</td> </tr>
+					<tr> <td align="left">+ processed [enum]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+					<tr> <td align="left" port="link_entry">&#128279; entry </td> </tr>
+					<tr> <td align="left" port="link_rnwform">&#128279; rnwform </td> </tr>
+					<tr> <td align="left" port="link_bankaccount">&#128279; bankaccount </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_payment">parents: periodgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_period [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_period"> <b>period</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ budgetdescription [longtext]</td> </tr>
+					<tr> <td align="left">+ from [date]</td> </tr>
+					<tr> <td align="left">+ to [date]</td> </tr>
+					<tr> <td align="left">+ state [enum]</td> </tr>
+					<tr> <td align="left">+ hasSpheres [bool]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_periodchain">&#128279; periodchain </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_period">parents: periodgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_periodchain [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_periodchain"> <b>periodchain</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ sourcechart [enum]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_period">&#128279; period </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_periodchain">parents: periodgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_periodgroup [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_periodgroup"> <b>periodgroup</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_post [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_post"> <b>post</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ text [longtext]</td> </tr>
+					<tr> <td align="left">+ image [image]</td> </tr>
+					<tr> <td align="left">+ userlabel [text]</td> </tr>
+					<tr> <td align="left">+ avatar [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_user">&#128279; user </td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_postcomment [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_postcomment"> <b>postcomment</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ text [longtext]</td> </tr>
+					<tr> <td align="left">+ memberlabel [text]</td> </tr>
+					<tr> <td align="left">+ memberimage [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_member">&#128279; member </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_postcomment">parents: post</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_presencelist [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_presencelist"> <b>presencelist</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ from [timestamp]</td> </tr>
+					<tr> <td align="left">+ archived [bool]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_membergroup">&#128279; membergroup </td> </tr>
+					<tr> <td align="left" port="link_calendarevent">&#128279; calendarevent </td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_rnwform [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_rnwform"> <b>rnwform</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ sendaddress [bool]</td> </tr>
+					<tr> <td align="left">+ description [longtext]</td> </tr>
+					<tr> <td align="left">+ formtype [enum]</td> </tr>
+					<tr> <td align="left">+ amounttype [enum]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_payment">&#128279; payment </td> </tr>
+					<tr> <td align="left" port="link_email">&#128279; email </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_rnwform">parents: rnwmerchant</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_rnwmerchant [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_rnwmerchant"> <b>rnwmerchant</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ approved [bool]</td> </tr>
+					<tr> <td align="left">+ iban [text]</td> </tr>
+					<tr> <td align="left">+ billingaddress [text]</td> </tr>
+					<tr> <td align="left">+ billingaddress2 [text]</td> </tr>
+					<tr> <td align="left">+ billingpostalcode [text]</td> </tr>
+					<tr> <td align="left">+ billingcity [text]</td> </tr>
+					<tr> <td align="left">+ billingcountry [text]</td> </tr>
+					<tr> <td align="left">+ email [text]</td> </tr>
+					<tr> <td align="left">+ firstname [text]</td> </tr>
+					<tr> <td align="left">+ lastname [text]</td> </tr>
+					<tr> <td align="left">+ merchantid [text]</td> </tr>
+					<tr> <td align="left">+ apikey [text]</td> </tr>
+					<tr> <td align="left">+ widgetkey [text]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_rnwmerchant">parents: periodgroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_saltedgeconnection [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_saltedgeconnection"> <b>saltedgeconnection</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ connectionId [text]</td> </tr>
+					<tr> <td align="left">+ status [text]</td> </tr>
+					<tr> <td align="left">+ connectionData [json]</td> </tr>
+					<tr> <td align="left">+ providerData [json]</td> </tr>
+					<tr> <td align="left">+ consentData [json]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_bankaccount">&#128279; bankaccount </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_saltedgeconnection">parents: periodchain</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_sepa [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_sepa"> <b>sepa</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ name [text]</td> </tr>
+					<tr> <td align="left">+ iban [text]</td> </tr>
+					<tr> <td align="left">+ bic [text]</td> </tr>
+					<tr> <td align="left">+ seriennr [text]</td> </tr>
+					<tr> <td align="left">+ currency [text]</td> </tr>
+					<tr> <td align="left">+ file [file]</td> </tr>
+					<tr> <td align="left">+ duedate [date]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_debitor">&#128279; debitor </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_sepa">parents: period</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_settings [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_settings"> <b>settings</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ logininfo [longtext]</td> </tr>
+					<tr> <td align="left">+ themeColor [text]</td> </tr>
+					<tr> <td align="left">+ themeColorAccent [text]</td> </tr>
+					<tr> <td align="left">+ clubName [text]</td> </tr>
+					<tr> <td align="left">+ country [text]</td> </tr>
+					<tr> <td align="left">+ currency [text]</td> </tr>
+					<tr> <td align="left">+ logo [image]</td> </tr>
+					<tr> <td align="left">+ hasPortal [bool]</td> </tr>
+					<tr> <td align="left">+ portalLoginEmails [json]</td> </tr>
+					<tr> <td align="left">+ portalMembergroups [json]</td> </tr>
+					<tr> <td align="left">+ portalCategoriesRead [json]</td> </tr>
+					<tr> <td align="left">+ portalCategoriesWrite [json]</td> </tr>
+					<tr> <td align="left">+ portalFlagMemberWrite [bool]</td> </tr>
+					<tr> <td align="left">+ portalFlagMemberRead [bool]</td> </tr>
+					<tr> <td align="left">+ hasPortalNotifications [bool]</td> </tr>
+					<tr> <td align="left">+ portalNotificationEmails [longtext]</td> </tr>
+					<tr> <td align="left">+ birthdayCalendar [json]</td> </tr>
+					<tr> <td align="left">+ areEmailsPublic [bool]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_sms [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_sms"> <b>sms</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ from [text]</td> </tr>
+					<tr> <td align="left">+ sent [timestamp]</td> </tr>
+					<tr> <td align="left">+ message [longtext]</td> </tr>
+					<tr> <td align="left">+ to [longtext]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_template [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_template"> <b>template</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ category [enum]</td> </tr>
+					<tr> <td align="left">+ templatetype [enum]</td> </tr>
+					<tr> <td align="left">+ value [json]</td> </tr>
+					<tr> <td align="left">+ ispublic [bool]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_user [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_user"> <b>user</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ email [text]</td> </tr>
+					<tr> <td align="left">+ avatar [image]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_comment">&#128279; comment </td> </tr>
+					<tr> <td align="left" port="link_post">&#128279; post </td> </tr>
+					<tr> <td align="left" port="link_letter">&#128279; letter </td> </tr>
+					<tr> <td align="left" port="link_email">&#128279; email </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_user">parents: usergroup</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_usergroup [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_usergroup"> <b>usergroup</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ custommemberaccess [permissions]</td> </tr>
+					<tr> <td align="left">+ customfinanceaccess [permissions]</td> </tr>
+					<tr> <td align="left">+ customcalendaraccess [permissions]</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	datatype_vat [
+		shape=plain
+		label=<<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr> <td port="title_vat"> <b>vat</b> </td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left">+ title [text]</td> </tr>
+					<tr> <td align="left">+ rate [numeric]</td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="link_entry">&#128279; entry </td> </tr>
+					<tr> <td align="left" port="link_account">&#128279; account </td> </tr>
+				</table>
+			</td> </tr>
+			<tr> <td>
+				<table border="0" cellborder="0" cellspacing="0">
+					<tr> <td align="left" port="parents_vat">parents: period</td> </tr>
+				</table>
+			</td> </tr>
+		</table>>
+	]
+	edge [arrowtail=empty style="" color="#16548E" penwidth = 2]
+	datatype_account:parents_account -> datatype_accountgroup:title_accountgroup
+	datatype_accountgroup:parents_accountgroup -> datatype_period:title_period
+	datatype_accountgrouptemplate:parents_accountgrouptemplate -> datatype_periodchain:title_periodchain
+	datatype_accounttemplate:parents_accounttemplate -> datatype_accountgrouptemplate:title_accountgrouptemplate
+	datatype_article:parents_article -> datatype_articlegroup:title_articlegroup
+	datatype_attendee:parents_attendee -> datatype_presencelist:title_presencelist
+	datatype_bankaccount:parents_bankaccount -> datatype_periodchain:title_periodchain
+	datatype_calendarevent:parents_calendarevent -> datatype_calendar:title_calendar
+	datatype_costcenter:parents_costcenter -> datatype_period:title_period
+	datatype_debitor:parents_debitor -> datatype_period:title_period
+	datatype_debitorcategory:parents_debitorcategory -> datatype_periodgroup:title_periodgroup
+	datatype_document:parents_document -> datatype_documentgroup:title_documentgroup
+	datatype_documentgroup:parents_documentgroup -> datatype_documentgroup:title_documentgroup
+	datatype_emailattachment:parents_emailattachment -> datatype_email:title_email
+	datatype_emailimage:parents_emailimage -> datatype_email:title_email
+	datatype_emailsent:parents_emailsent -> datatype_email:title_email
+	datatype_emotion:parents_emotion -> datatype_post:title_post
+	datatype_entry:parents_entry -> datatype_entrygroup:title_entrygroup
+	datatype_entrygroup:parents_entrygroup -> datatype_period:title_period
+	datatype_letterimage:parents_letterimage -> datatype_letter:title_letter
+	datatype_letterpdf:parents_letterpdf -> datatype_letter:title_letter
+	datatype_member:parents_member -> datatype_membergroup:title_membergroup
+	datatype_memberform:parents_memberform -> datatype_membergroup:title_membergroup
+	datatype_membergroup:parents_membergroup -> datatype_membergroup:title_membergroup
+	datatype_page:parents_page -> datatype_page:title_page
+	datatype_participant:parents_participant -> datatype_calendarevent:title_calendarevent
+	datatype_payment:parents_payment -> datatype_periodgroup:title_periodgroup
+	datatype_period:parents_period -> datatype_periodgroup:title_periodgroup
+	datatype_periodchain:parents_periodchain -> datatype_periodgroup:title_periodgroup
+	datatype_postcomment:parents_postcomment -> datatype_post:title_post
+	datatype_rnwform:parents_rnwform -> datatype_rnwmerchant:title_rnwmerchant
+	datatype_rnwmerchant:parents_rnwmerchant -> datatype_periodgroup:title_periodgroup
+	datatype_saltedgeconnection:parents_saltedgeconnection -> datatype_periodchain:title_periodchain
+	datatype_sepa:parents_sepa -> datatype_period:title_period
+	datatype_user:parents_user -> datatype_usergroup:title_usergroup
+	datatype_vat:parents_vat -> datatype_period:title_period
+	edge [arrowhead=empty arrowtail=empty color="#5AB30F" style=dashed penwidth = 2]
+	edge [dir="both"]
+	datatype_account:link_comment -> datatype_comment:link_account
+	datatype_account:link_accounttemplate -> datatype_accounttemplate:link_account
+	datatype_account:link_entrygroup -> datatype_entrygroup:link_account
+	datatype_account:link_entry -> datatype_entry:link_account
+	datatype_account:link_vat -> datatype_vat:link_account
+	datatype_accountgroup:link_accountgrouptemplate -> datatype_accountgrouptemplate:link_accountgroup
+	datatype_accounttemplate:link_bankaccount -> datatype_bankaccount:link_accounttemplate
+	datatype_attendee:link_member -> datatype_member:link_attendee
+	datatype_bankaccount:link_payment -> datatype_payment:link_bankaccount
+	datatype_bankaccount:link_saltedgeconnection -> datatype_saltedgeconnection:link_bankaccount
+	datatype_calendar:link_membergroup -> datatype_membergroup:link_calendar
+	datatype_calendarevent:link_presencelist -> datatype_presencelist:link_calendarevent
+	datatype_calendarevent:link_file -> datatype_file:link_calendarevent
+	datatype_comment:link_member -> datatype_member:link_comment
+	datatype_comment:link_debitor -> datatype_debitor:link_comment
+	datatype_comment:link_user -> datatype_user:link_comment
+	datatype_costcenter:link_entry -> datatype_entry:link_costcenter
+	datatype_debitor:link_member -> datatype_member:link_debitor
+	datatype_debitor:link_email -> datatype_email:link_debitor
+	datatype_debitor:link_emailsent -> datatype_emailsent:link_debitor
+	datatype_debitor:link_letter -> datatype_letter:link_debitor
+	datatype_debitor:link_letterpdf -> datatype_letterpdf:link_debitor
+	datatype_debitor:link_debitorcategory -> datatype_debitorcategory:link_debitor
+	datatype_debitor:link_entry -> datatype_entry:link_debitor
+	datatype_documentgroup:link_page -> datatype_page:link_documentgroup
+	datatype_email:link_member -> datatype_member:link_email
+	datatype_email:link_letter -> datatype_letter:link_email
+	datatype_email:link_rnwform -> datatype_rnwform:link_email
+	datatype_emailsent:link_member -> datatype_member:link_emailsent
+	datatype_emailsent:link_letterpdf -> datatype_letterpdf:link_emailsent
+	datatype_emotion:link_member -> datatype_member:link_emotion
+	datatype_entry:link_payment -> datatype_payment:link_entry
+	datatype_entry:link_vat -> datatype_vat:link_entry
+	datatype_file:link_page -> datatype_page:link_file
+	datatype_file:link_letter -> datatype_letter:link_file
+	datatype_file:link_memberform -> datatype_memberform:link_file
+	datatype_letter:link_member -> datatype_member:link_letter
+	datatype_letterpdf:link_member -> datatype_member:link_letterpdf
+	datatype_member:link_participant -> datatype_participant:link_member
+	datatype_member:link_postcomment -> datatype_postcomment:link_member
+	datatype_membergroup:link_presencelist -> datatype_presencelist:link_membergroup
+	datatype_membergroup:link_page -> datatype_page:link_membergroup
+	datatype_payment:link_rnwform -> datatype_rnwform:link_payment
+	datatype_period:link_periodchain -> datatype_periodchain:link_period
+	datatype_post:link_user -> datatype_user:link_post
+	edge [dir="L"]
+	datatype_debitor:link_paymentrecord -> datatype_payment
+	datatype_debitor:link_revenue -> datatype_entry
+	datatype_debitor:link_payment -> datatype_entry
+	datatype_debitor:link_writeoff -> datatype_entry
+	datatype_documentgroup:link_usergroup -> datatype_usergroup
+	datatype_documentgroup:link_user -> datatype_user
+	datatype_email:link_sender -> datatype_user
+	datatype_email:link_owners -> datatype_user
+	datatype_entry:link_debit -> datatype_account
+	datatype_entry:link_credit -> datatype_account
+	datatype_entry:link_entry -> datatype_entry
+	datatype_letter:link_sender -> datatype_user
+	datatype_letter:link_owners -> datatype_user
+	datatype_payment:link_debitor -> datatype_debitor
+	datatype_sepa:link_debitor -> datatype_debitor
+	datatype_user:link_letter -> datatype_letter
+	datatype_user:link_email -> datatype_email
+}
