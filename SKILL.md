@@ -119,16 +119,18 @@ Full lists return array of complete objects:
 
 ## Fetching Multiple Objects
 
-**Option 1**: Comma-separated IDs
-```
-/api/1/member/536,525,506,535
-```
-
-**Option 2**: Full format parameter
+**Recommended**: Full format parameter (for bulk operations)
 ```
 /api/1/member?format=full
 /api/1/member?format=full&filter=$parents.$id=552
 ```
+Best for fetching large numbers of objects. Returns complete objects for all matching records.
+
+**Alternative**: Comma-separated IDs (for small batches only)
+```
+/api/1/member/536,525,506,535
+```
+⚠️ **Warning**: Limited by URL length (~2000 chars). Use only for small batches (<50 IDs). For larger datasets, use `format=full` with filters instead to avoid HTTP 414 "Request-URI Too Large" errors.
 
 ## Pagination
 ```
@@ -262,6 +264,34 @@ NOT `Email` IS EMPTY
 ```
 
 ## Common Patterns
+
+### ⚠️ Batch Fetching Considerations
+
+When working with related objects (e.g., entries + entrygroups + accounts):
+- **Don't** build URLs with hundreds of comma-separated IDs
+- **Do** use `format=full` and filter in memory
+
+**Example - Fetching all accounting entries with details:**
+```python
+# Step 1: Fetch all entries
+entries = fetch("/entry?format=full")
+
+# Step 2: Fetch all related objects (NOT by ID list)
+entrygroups = fetch("/entrygroup?format=full")
+accounts = fetch("/account?format=full")
+
+# Step 3: Join in memory
+entrygroups_dict = {eg["id"]: eg for eg in entrygroups}
+accounts_dict = {acc["id"]: acc for acc in accounts}
+
+# Step 4: Enrich entries with related data
+for entry in entries:
+    entry["entrygroup_data"] = entrygroups_dict.get(entry["parents"][0])
+    entry["debit_account"] = accounts_dict.get(entry["links"]["debit"][0])
+    entry["credit_account"] = accounts_dict.get(entry["links"]["credit"][0])
+```
+
+This approach avoids URL length limitations and is more efficient than multiple individual requests.
 
 ### Create Member
 ```bash
