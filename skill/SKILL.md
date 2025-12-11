@@ -108,6 +108,49 @@ Full lists return array of complete objects:
 { "error": "Error message" }
 ```
 
+## ⚠️ Important: Nested Data Retrieval
+
+**The `format=full` parameter only expands the first level of objects.**
+
+When you query an endpoint with `format=full`:
+- ✅ Primary objects are fully expanded with all properties
+- ❌ Relationship references (parents, children, links) are **IDs only**
+- ❌ You **cannot** get nested object data in a single request
+
+### Common Mistake
+
+```bash
+# ❌ This does NOT return full debitor data
+GET /member?filter=$links.debitor.state = "open"&format=full
+
+# Response includes debitor IDs only:
+{
+  "type": "member",
+  "properties": { "Vorname": "Fritz", "Name": "Meier" },
+  "links": { "debitor": [1234] }  // ID only, not full object
+}
+```
+
+### Correct Approach
+
+To get full related object data, fetch separately and join in memory:
+
+```python
+# Step 1: Fetch primary objects
+members = fetch("/member?filter=$links.debitor.state='open'&format=full")
+
+# Step 2: Fetch related objects separately
+debitors = fetch("/debitor?filter=state='open'&format=full")
+
+# Step 3: Join in memory
+debitors_dict = {d["id"]: d for d in debitors}
+for member in members:
+    debitor_ids = member.get("links", {}).get("debitor", [])
+    member["debitors_full"] = [debitors_dict.get(id) for id in debitor_ids]
+```
+
+See [Common Patterns](#common-patterns) below for detailed examples.
+
 ## HTTP Status Codes
 - `200` OK, `201` Created, `204` No Content, `304` Not Modified
 - `400` Bad Request, `401` Unauthorized, `403` Forbidden, `404` Not Found
@@ -138,6 +181,24 @@ Best for fetching large numbers of objects. Returns complete objects for all mat
 ```
 
 ## Navigating Relationships
+
+**CRITICAL: Relationships are returned as IDs, not full objects.**
+
+When you fetch a member with `format=full`, you get:
+```json
+{
+  "type": "member",
+  "properties": { "Vorname": "Fritz" },
+  "parents": [550],              // ← Parent group ID (not full object)
+  "links": { "debitor": [1234] } // ← Linked debitor ID (not full object)
+}
+```
+
+To get the full parent or linked object, make a separate API call:
+```bash
+GET /membergroup/550?format=full
+GET /debitor/1234?format=full
+```
 
 Webling's data model uses two types of relationships:
 
@@ -265,33 +326,104 @@ NOT `Email` IS EMPTY
 
 ## Common Patterns
 
-### ⚠️ Batch Fetching Considerations
+### Pattern: Fetch Objects with Related Data
 
-When working with related objects (e.g., entries + entrygroups + accounts):
-- **Don't** build URLs with hundreds of comma-separated IDs
-- **Do** use `format=full` and filter in memory
+**Problem**: You need members with their unpaid invoices (debitors) and full details of both.
 
-**Example - Fetching all accounting entries with details:**
+**Solution**: Fetch-and-join pattern (2-3 API calls, join in memory)
+
 ```python
-# Step 1: Fetch all entries
-entries = fetch("/entry?format=full")
+import requests
 
-# Step 2: Fetch all related objects (NOT by ID list)
-entrygroups = fetch("/entrygroup?format=full")
-accounts = fetch("/account?format=full")
+BASE_URL = "https://demo.webling.ch/api/1"
+API_KEY = "your_api_key"
 
-# Step 3: Join in memory
-entrygroups_dict = {eg["id"]: eg for eg in entrygroups}
-accounts_dict = {acc["id"]: acc for acc in accounts}
+def fetch(endpoint, filter=None):
+    """Helper to fetch from API"""
+    params = {"apikey": API_KEY, "format": "full"}
+    if filter:
+        params["filter"] = filter
+    response = requests.get(f"{BASE_URL}{endpoint}", params=params)
+    response.raise_for_status()
+    return response.json()
 
-# Step 4: Enrich entries with related data
-for entry in entries:
-    entry["entrygroup_data"] = entrygroups_dict.get(entry["parents"][0])
-    entry["debit_account"] = accounts_dict.get(entry["links"]["debit"][0])
-    entry["credit_account"] = accounts_dict.get(entry["links"]["credit"][0])
+# Step 1: Fetch members filtered by relationship
+members = fetch("/member", filter='$links.debitor.state = "open"')
+
+# Step 2: Fetch all related debitors separately
+debitors = fetch("/debitor", filter='state = "open"')
+
+# Step 3: Create lookup dictionary for fast access
+debitors_by_id = {d["id"]: d for d in debitors}
+
+# Step 4: Enrich members with full debitor data
+for member in members:
+    debitor_ids = member.get("links", {}).get("debitor", [])
+    member["unpaid_invoices"] = [
+        debitors_by_id[did]
+        for did in debitor_ids
+        if did in debitors_by_id
+    ]
+    member["total_unpaid"] = sum(
+        d.get("properties", {}).get("remainingamount", 0)
+        for d in member["unpaid_invoices"]
+    )
+
+# Now you have complete data
+for member in members:
+    print(f"{member['properties']['Vorname']} {member['properties']['Name']}")
+    print(f"  Total unpaid: {member['total_unpaid']}")
+    for invoice in member["unpaid_invoices"]:
+        print(f"  - Invoice {invoice['id']}: {invoice['properties']['remainingamount']}")
 ```
 
-This approach avoids URL length limitations and is more efficient than multiple individual requests.
+**Why this works**:
+- ✅ Avoids URL length limits (no comma-separated ID lists)
+- ✅ Efficient: Only 2-3 API calls regardless of result size
+- ✅ Complete data: Full objects for both members and debitors
+- ✅ Flexible: Easy to add more related entities
+
+**Common mistake to avoid**:
+```python
+# ❌ DON'T DO THIS - Tries to build URLs with hundreds of IDs
+debitor_ids = [d for m in members for d in m["links"].get("debitor", [])]
+url = f"/debitor/{','.join(map(str, debitor_ids))}"  # URL too long!
+```
+
+### Pattern: Complex Multi-Entity Join
+
+For accounting data (entries + accounts + entrygroups):
+
+```python
+# Step 1: Fetch all entity types in parallel
+entries = fetch("/entry")
+accounts = fetch("/account")
+entrygroups = fetch("/entrygroup")
+
+# Step 2: Create lookup dictionaries
+accounts_dict = {a["id"]: a for a in accounts}
+entrygroups_dict = {eg["id"]: eg for eg in entrygroups}
+
+# Step 3: Enrich entries with related data
+for entry in entries:
+    # Add parent entrygroup data
+    entrygroup_id = entry.get("parents", [None])[0]
+    entry["entrygroup"] = entrygroups_dict.get(entrygroup_id)
+
+    # Add linked account data
+    debit_id = entry.get("links", {}).get("debit", [None])[0]
+    credit_id = entry.get("links", {}).get("credit", [None])[0]
+    entry["debit_account"] = accounts_dict.get(debit_id)
+    entry["credit_account"] = accounts_dict.get(credit_id)
+
+    # Now you can access nested properties
+    if entry["entrygroup"]:
+        entry["date"] = entry["entrygroup"]["properties"]["date"]
+    if entry["debit_account"]:
+        entry["debit_account_name"] = entry["debit_account"]["properties"]["title"]
+    if entry["credit_account"]:
+        entry["credit_account_name"] = entry["credit_account"]["properties"]["title"]
+```
 
 ### Create Member
 ```bash
@@ -355,6 +487,66 @@ All endpoints support: `GET` (list/single), `POST` (create), `PUT` (update), `DE
 | `/currentuser` | Current session info |
 
 For detailed endpoint documentation, see the reference files listed in Quick Reference above.
+
+## Troubleshooting
+
+### Issue: Getting Placeholder Values Like `[First]`, `[Name]`
+
+**Symptoms**: When accessing object properties, you see placeholder text instead of actual data:
+```python
+member["properties"]["Vorname"]  # Returns "[First]" instead of "Fritz"
+account["properties"]["title"]   # Returns "[Account Name]" instead of "Bank Account"
+```
+
+**Cause**: You're trying to access data from a relationship that hasn't been fetched with `format=full`.
+
+**Solution**: Fetch the related objects separately:
+
+```python
+# ❌ Wrong - assumes linked objects are expanded
+members = fetch("/member?filter=$links.debitor.state='open'&format=full")
+# member["links"]["debitor"] only contains IDs, not full objects
+
+# ✅ Correct - fetch both entity types separately
+members = fetch("/member?filter=$links.debitor.state='open'&format=full")
+debitors = fetch("/debitor?filter=state='open'&format=full")
+
+# Join them
+debitors_dict = {d["id"]: d for d in debitors}
+for member in members:
+    member["debitors"] = [
+        debitors_dict[did]
+        for did in member.get("links", {}).get("debitor", [])
+        if did in debitors_dict
+    ]
+```
+
+### Issue: URL Too Long Error (HTTP 414)
+
+**Symptoms**: Getting HTTP 414 "Request-URI Too Large" when fetching multiple objects by ID.
+
+**Cause**: Trying to fetch too many objects using comma-separated IDs:
+```python
+# ❌ This can fail with many IDs
+GET /member/536,525,506,535,...,999  # URL too long
+```
+
+**Solution**: Use `format=full` and filter in memory:
+```python
+# ✅ Fetch all objects
+all_members = fetch("/member?format=full")
+
+# Filter in Python
+needed_ids = [536, 525, 506, 535, ...]
+members_dict = {m["id"]: m for m in all_members}
+filtered = [members_dict[id] for id in needed_ids if id in members_dict]
+```
+
+Or use filters:
+```python
+# ✅ Use IN filter (query language)
+GET /member?filter=$id IN (536, 525, 506)&format=full
+```
 
 ## Complete Data Model Reference
 
