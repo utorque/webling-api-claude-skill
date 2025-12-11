@@ -100,27 +100,27 @@ jobs:
         run: |
           echo "Validating skill structure..."
           
-          # Check SKILL.md exists
-          if [ ! -f "SKILL.md" ]; then
-            echo "ERROR: SKILL.md not found"
+          # Check SKILL.md exists in skill folder
+          if [ ! -f "skill/SKILL.md" ]; then
+            echo "ERROR: skill/SKILL.md not found"
             exit 1
           fi
           
           # Check frontmatter
-          if ! head -1 SKILL.md | grep -q "^---"; then
-            echo "ERROR: SKILL.md must start with YAML frontmatter (---)"
+          if ! head -1 skill/SKILL.md | grep -q "^---"; then
+            echo "ERROR: skill/SKILL.md must start with YAML frontmatter (---)"
             exit 1
           fi
           
           # Check name field
-          if ! grep -q "^name:" SKILL.md; then
-            echo "ERROR: SKILL.md frontmatter must contain 'name:' field"
+          if ! grep -q "^name:" skill/SKILL.md; then
+            echo "ERROR: skill/SKILL.md frontmatter must contain 'name:' field"
             exit 1
           fi
           
           # Check description field
-          if ! grep -q "^description:" SKILL.md; then
-            echo "ERROR: SKILL.md frontmatter must contain 'description:' field"
+          if ! grep -q "^description:" skill/SKILL.md; then
+            echo "ERROR: skill/SKILL.md frontmatter must contain 'description:' field"
             exit 1
           fi
           
@@ -134,17 +134,15 @@ jobs:
           
           echo "Packaging skill as $OUTPUT_FILE..."
           
-          # Create zip with .skill extension
-          # Exclude hidden files and directories except .github if needed
-          zip -r "$OUTPUT_FILE" . \
-            -x "*.git*" \
-            -x "*.github*" \
+          # Create zip with .skill extension from skill folder contents
+          cd skill
+          zip -r "../$OUTPUT_FILE" . \
             -x "*.DS_Store" \
-            -x "__MACOSX/*" \
-            -x "*.skill"
+            -x "__MACOSX/*"
+          cd ..
           
           echo "Package created: $OUTPUT_FILE"
-          ls -la "$OUTPUT_FILE"
+          ls -lh "$OUTPUT_FILE"
       
       - name: Generate release notes
         if: steps.tag_check.outputs.exists == 'false'
