@@ -2,21 +2,22 @@
 
 A comprehensive Claude skill that provides complete guidance for interacting with the [Webling](https://webling.ch) API, an association membership management and accounting software.
 
-**⚠️ Beta Status**: This project is in beta and requires thorough testing. Use with caution in production environments.
+**⚠️ Beta Status**: This project is provided as-is without any warranty. Some basic testing was done and proved that the skill works but mistakes WILL be made by the agent. Human validation and thorough testing of generated code is required.
 
 **Disclaimer**: This is an independent project and is not affiliated with, endorsed by, or officially connected to Webling or webling.ch in any way.
 
 ## What It Does
 
 This skill enables Claude to understand and work with Webling's complete API, including:
-#### Tested :
+#### Fairly Tested :
 - **Member Management**: Members, groups, forms, attendance tracking
 - **Finance & Accounting**: Invoices, entries, accounts, periods, cost centers
-#### Untested :
+#### Lightly tested :
 - **Documents**: File management and folders
 - **Articles**: Inventory and material management
+- **Other Features**: Query language, replication/sync, data model navigation
+#### Untested or tests failed :
 - **Administration**: Users, roles, API keys
-- **Advanced Features**: Query language, replication/sync, data model navigation
 
 ## Installation for Claude Code
 
