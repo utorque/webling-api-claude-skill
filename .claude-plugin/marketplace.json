@@ -1,0 +1,27 @@
+{
+  "name": "webling-api-marketplace",
+  "owner": {
+    "name": "utorque",
+    "email": "contact@example.com"
+  },
+  "metadata": {
+    "description": "Webling API integration skills for Claude Code"
+  },
+  "plugins": [
+    {
+      "name": "webling-api",
+      "source": "./skill",
+      "description": "Complete Webling API integration skill for interacting with Webling databases. Use when working with Webling member management, accounting/finance, documents, articles, or any Webling API operations. Covers authentication, all endpoints (members, membergroups, debitors, accounts, entries, documents, periods, users, etc.), query language, pagination, change tracking/replication, and the complete data model with relationships.",
+      "author": {
+        "name": "utorque"
+      },
+      "homepage": "https://github.com/utorque/webling-api-claude-skill",
+      "repository": "https://github.com/utorque/webling-api-claude-skill",
+      "license": "MIT",
+      "keywords": ["webling", "api", "crm", "accounting", "member-management", "swiss"],
+      "category": "integration",
+      "tags": ["api", "webling", "integration", "crm"],
+      "strict": true
+    }
+  ]
+}
