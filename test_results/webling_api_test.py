@@ -4,7 +4,7 @@ Comprehensive Webling API Test Suite
 Tests all major API categories: Members, Finance, Documents, Articles, Users/Admin, Core, Letters, and Replication
 """
 
-# # Prompt used to generate this file (usning Claude Code with Sonnet 4.5):
+# # Prompt used to generate this file (using Claude Code with Sonnet 4.5):
 
 # # Let's test the webling skill by testing to create some api calls. Generate 
 # # questions to ask the api from the quick reference to test each concept at least 
