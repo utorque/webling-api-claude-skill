@@ -20,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.event.head_commit.message, 'RELEASE')
     
     steps:
       - name: Checkout repository
