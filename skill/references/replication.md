@@ -1,6 +1,15 @@
 # Track Changes / Replicate API Reference
 
-> **Note**: These endpoints (`/replicate`, `/changes`) provide change tracking for efficient synchronization. They return object IDs that can be fetched using standard endpoints. See `webling_data_graphviz.txt` for object type definitions.
+## Overview
+
+The replication API provides change tracking for efficient synchronization. These endpoints don't manage data objects directly - they return metadata about which objects have changed, allowing you to fetch only modified data.
+
+**Key Concepts**:
+- Every change in Webling creates a new **revision** with an incrementing ID
+- Use `/replicate` or `/changes` to get lists of changed object IDs since a specific revision or timestamp
+- Fetch the actual objects using standard endpoints (`/member`, `/debitor`, etc.)
+
+> **Note**: These endpoints return object IDs. Use the reference documents (members.md, finance.md, etc.) to understand the returned object types and their relationships.
 
 ## How It Works
 

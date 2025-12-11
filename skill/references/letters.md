@@ -1,21 +1,63 @@
 # Letters API Reference
 
-> **Data Model Reference**: See `webling_data_graphviz.txt` for complete letter object definitions including letter, letterpdf, letterimage, email, and emailsent.
+## Data Model Overview
+
+This document covers letter and email management in Webling. The letter system handles PDF generation and email communication with members and debitors (invoices).
 
 **Note**: These endpoints are only available for letters created with the new editor.
 
-## Letter Object Hierarchy
+### Complete Object Hierarchy
 
 ```
-letter (standalone)
-  ├── letterpdf → links to member or debitor
+letter (root object)
+  ├── letterpdf (generated PDFs) → links to member or debitor
   └── letterimage (embedded images)
 
-email (standalone)
-  ├── emailsent → links to member or debitor
-  ├── emailattachment
-  └── emailimage
+email (root object)
+  ├── emailsent (sent email records) → links to member or debitor
+  ├── emailattachment (file attachments)
+  └── emailimage (embedded images)
 ```
+
+### Object Relationships Summary
+
+| Object | Parent | Children | Links To |
+|--------|--------|----------|----------|
+| **letter** | none (root) | letterpdf, letterimage | member, debitor, sender (user), owners (user), email, file |
+| **letterpdf** | letter | none | member, debitor, emailsent |
+| **letterimage** | letter | none | none |
+| **email** | none (root) | emailsent, emailattachment, emailimage | sender (user), owners (user), member, debitor, letter, rnwform |
+| **emailsent** | email | none | member, debitor, letterpdf |
+| **emailattachment** | email | none | none |
+| **emailimage** | email | none | none |
+
+**Properties Summary**:
+
+**Letter**:
+- `title` [text] - Letter title
+- `lettertype` [enum] - `member` or `debitor`
+- `state` [enum] - Letter state (e.g., `sent`)
+- `sentat` [timestamp] - When letter was sent
+- `sentby` [text] - Who sent it
+- `data` [json] - Letter template configuration
+- `isattachment` [bool] - Whether it's an attachment
+- `preview` [image] - Preview image
+
+**Letterpdf**:
+- `pdf` [file] - Generated PDF file with href, size, ext, mime, timestamp
+
+**Email**:
+- `title`, `subject` [text] - Email title and subject
+- `body` [longtext] - Email body HTML
+- `fromName`, `fromEmail` [text] - Sender information
+- `to`, `cc`, `bcc` [longtext] - Recipients
+- `emailtype` [enum] - Email type
+- `state` [enum] - Email state
+- `sentat` [timestamp] - When sent
+- `data` [json] - Email template data
+- `preview` [image] - Preview image
+
+> **Note**: For complex queries involving multiple object relationships, refer to `full-object-relations.md`
 
 ## Letter
 

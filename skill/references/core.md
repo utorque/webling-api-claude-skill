@@ -1,6 +1,39 @@
 # Core API Reference
 
-> **Data Model Reference**: Core endpoints (`/config`, `/definition`, `/quota`, `/setting`) provide system-level information and configuration. See also `settings` object type in `webling_data_graphviz.txt`.
+## Data Model Overview
+
+This document covers system-level endpoints that provide configuration, field definitions, quota information, and settings. These are meta-endpoints that describe the Webling instance itself rather than managing data objects.
+
+### Core Object Types
+
+| Object | Type | Description |
+|--------|------|-------------|
+| **settings** | Root object (singleton) | System-wide settings for the Webling instance |
+| **config** | Read-only data | Configuration values (read via `/config` endpoint) |
+| **definition** | Read-only data | Field definitions for all object types (read via `/definition` endpoint) |
+| **quota** | Read-only data | Usage and limits (read via `/quota` endpoint) |
+
+**Settings Properties** (from data model):
+- `logininfo` [longtext] - Login page information
+- `themeColor` [text] - Primary theme color
+- `themeColorAccent` [text] - Accent color
+- `clubName` [text] - Organization name
+- `country` [text] - Country code
+- `currency` [text] - Currency code
+- `logo` [image] - Organization logo
+- `hasPortal` [bool] - Member portal enabled
+- `portalLoginEmails` [json] - Portal login configuration
+- `portalMembergroups` [json] - Portal accessible groups
+- `portalCategoriesRead` [json] - Portal read permissions
+- `portalCategoriesWrite` [json] - Portal write permissions
+- `portalFlagMemberWrite` [bool] - Members can edit own data
+- `portalFlagMemberRead` [bool] - Members can view own data
+- `hasPortalNotifications` [bool] - Portal notifications enabled
+- `portalNotificationEmails` [longtext] - Notification recipients
+- `birthdayCalendar` [json] - Birthday calendar configuration
+- `areEmailsPublic` [bool] - Whether emails are visible to all members
+
+> **Note**: For complex queries involving multiple object relationships, refer to `full-object-relations.md`
 
 ## Config
 

@@ -2,3 +2,4 @@
 venv/
 test/
 .env
+webling_object_graphviz.txt

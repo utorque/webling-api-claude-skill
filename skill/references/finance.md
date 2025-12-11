@@ -1,26 +1,58 @@
 # Finance API Reference
 
-> **Data Model Reference**: See `webling_data_graphviz.txt` for complete finance object definitions including debitor, debitorcategory, entry, entrygroup, account, accountgroup, accounttemplate, accountgrouptemplate, period, periodchain, periodgroup, costcenter, payment, bankaccount, and vat.
+## Data Model Overview
 
-## Finance Object Hierarchy
+This document covers all finance-related objects in Webling's double-entry accounting system. The finance module includes periods, accounts, entries (postings), invoices (debitors), and payment tracking.
+
+### Complete Object Hierarchy
 
 ```
 periodgroup (root container)
   ├── period (accounting period)
-  │     ├── accountgroup
+  │     ├── accountgroup (account categories)
   │     │     └── account → links to accounttemplate
-  │     ├── entrygroup (financial posting)
+  │     ├── entrygroup (collective posting)
   │     │     └── entry → links to debit/credit accounts
   │     ├── debitor (invoice) → links to member
-  │     ├── costcenter
-  │     └── vat
+  │     ├── costcenter (cost centers)
+  │     ├── vat (tax records)
+  │     └── sepa (SEPA direct debits)
   ├── periodchain (chart of accounts template)
-  │     ├── accountgrouptemplate
-  │     │     └── accounttemplate
-  │     └── bankaccount → links to accounttemplate
+  │     ├── accountgrouptemplate (account category templates)
+  │     │     └── accounttemplate (account templates)
+  │     ├── bankaccount → links to accounttemplate
+  │     └── saltedgeconnection (bank sync)
   ├── debitorcategory (invoice categories)
-  └── payment (payment records)
+  ├── payment (payment records/transactions)
+  └── rnwmerchant (RaiseNow payment processor)
+        └── rnwform (payment forms)
 ```
+
+### Object Relationships Summary
+
+| Object | Parent | Children | Links To |
+|--------|--------|----------|----------|
+| **periodgroup** | none (root) | period, periodchain, debitorcategory, payment, rnwmerchant | none |
+| **period** | periodgroup | accountgroup, entrygroup, debitor, costcenter, vat, sepa | periodchain |
+| **periodchain** | periodgroup | accountgrouptemplate, bankaccount, saltedgeconnection | period (bidirectional) |
+| **accountgroup** | period | account | accountgrouptemplate |
+| **account** | accountgroup | none | comment, accounttemplate, entrygroup, entry, vat |
+| **accountgrouptemplate** | periodchain | accounttemplate | accountgroup |
+| **accounttemplate** | accountgrouptemplate | none | account, bankaccount |
+| **entrygroup** | period | entry | account |
+| **entry** | entrygroup | none | debit (account), credit (account), account, costcenter, debitor, payment, vat, entry (self) |
+| **debitor** | period | none | member, email, emailsent, letter, letterpdf, comment, debitorcategory, paymentrecord (payment), revenue (entry), payment (entry), writeoff (entry), entry |
+| **debitorcategory** | periodgroup | none | debitor |
+| **costcenter** | period | none | entry |
+| **vat** | period | none | entry, account |
+| **payment** | periodgroup | none | debitor, entry, rnwform, bankaccount |
+| **bankaccount** | periodchain | none | accounttemplate, payment, saltedgeconnection |
+| **sepa** | period | none | debitor |
+| **saltedgeconnection** | periodchain | none | bankaccount |
+| **rnwmerchant** | periodgroup | rnwform | none |
+| **rnwform** | rnwmerchant | none | payment, email |
+
+> **Note**: For complex queries involving multiple object relationships, refer to `full-object-relations.md`
 
 ## Debitor (Invoice)
 
@@ -541,9 +573,49 @@ DELETE /periodchain/{id}
 
 ---
 
+## Periodgroup
+
+Root container for all finance-related objects.
+
+**Object Type**: `periodgroup`
+**Parent**: none (root object)
+**Children**: period, periodchain, debitorcategory, payment, rnwmerchant
+**Links**: none
+
+**Properties** (from data model):
+- `title` [text] - Periodgroup name
+
+**Relationship Notes**:
+- Acts as the root container for the entire finance system
+- All periods and period chains belong to a periodgroup
+- Invoice categories and payments are also children of periodgroup
+
+### CRUD Operations
+```
+GET /periodgroup?filter=&order=title ASC&format=
+POST /periodgroup
+GET /periodgroup/{id}
+PUT /periodgroup/{id}
+DELETE /periodgroup/{id}
+```
+
+---
+
 ## Costcenter
 
-Categorize entries. Child of period.
+Cost centers for categorizing expenses and revenue. Child of period.
+
+**Object Type**: `costcenter`
+**Parent**: `period`
+**Children**: none
+**Links**: entry
+
+**Properties** (from data model):
+- `title` [text] - Cost center name
+
+**Relationship Notes**:
+- Entries can be linked to cost centers for expense tracking
+- Cost centers are period-specific
 
 ### CRUD Operations
 ```
@@ -557,10 +629,178 @@ DELETE /costcenter/{id}
 **Create Request**:
 ```json
 {
-  "properties": { "title": "Marketing", "number": "CC001" },
+  "properties": { "title": "Marketing" },
   "parents": [3777]
 }
 ```
+
+---
+
+## VAT
+
+Value-added tax (VAT) or sales tax records. Child of period.
+
+**Object Type**: `vat`
+**Parent**: `period`
+**Children**: none
+**Links**: entry, account
+
+**Properties** (from data model):
+- `title` [text] - VAT rate name (e.g., "Standard 19%", "Reduced 7%")
+- `rate` [numeric] - Tax rate as decimal (e.g., 0.19 for 19%)
+
+**Relationship Notes**:
+- Links to entries that use this VAT rate
+- Can link to VAT accounts for automatic tax calculation
+- VAT records are period-specific
+
+### CRUD Operations
+```
+GET /vat?filter=&order=title ASC&format=
+POST /vat
+GET /vat/{id}
+PUT /vat/{id}
+DELETE /vat/{id}
+```
+
+---
+
+## Bankaccount
+
+Bank account for payment synchronization. Child of periodchain.
+
+**Object Type**: `bankaccount`
+**Parent**: `periodchain`
+**Children**: none
+**Links**: accounttemplate, payment, saltedgeconnection
+
+**Properties** (from data model):
+- `title` [text] - Account name
+- `balance` [numeric] - Current balance
+- `iban` [text] - IBAN number
+- `lastSync` [timestamp] - Last synchronization time
+- `accounttype` [enum] - Account type
+- `iconUrl` [text] - Bank logo URL
+- `externalId` [text] - External account ID
+- `data` [json] - Additional account data
+
+**Relationship Notes**:
+- Links to accounttemplate to map to accounting accounts
+- Links to payment records for transaction matching
+- Can be connected via saltedgeconnection for automatic sync
+- Child of periodchain (not period) to persist across accounting periods
+
+### CRUD Operations
+```
+GET /bankaccount?filter=&order=title ASC&format=
+POST /bankaccount
+GET /bankaccount/{id}
+PUT /bankaccount/{id}
+DELETE /bankaccount/{id}
+```
+
+---
+
+## SEPA
+
+SEPA direct debit batches. Child of period.
+
+**Object Type**: `sepa`
+**Parent**: `period`
+**Children**: none
+**Links**: debitor
+
+**Properties** (from data model):
+- `name` [text] - SEPA batch name
+- `iban` [text] - Creditor IBAN
+- `bic` [text] - Creditor BIC
+- `seriennr` [text] - Sequential number
+- `currency` [text] - Currency code (e.g., "EUR")
+- `file` [file] - Generated SEPA XML file
+- `duedate` [date] - Collection due date
+
+**Relationship Notes**:
+- Links to debitors (invoices) to be collected via SEPA
+- Used for batch payment collection
+- SEPA records are period-specific
+
+---
+
+## Saltedgeconnection
+
+Bank synchronization connection via Salt Edge API. Child of periodchain.
+
+**Object Type**: `saltedgeconnection`
+**Parent**: `periodchain`
+**Children**: none
+**Links**: bankaccount
+
+**Properties** (from data model):
+- `title` [text] - Connection name
+- `connectionId` [text] - Salt Edge connection ID
+- `status` [text] - Connection status
+- `connectionData` [json] - Connection details
+- `providerData` [json] - Bank provider information
+- `consentData` [json] - User consent data
+
+**Relationship Notes**:
+- Links to bankaccounts for automatic transaction sync
+- Manages bank API connection credentials
+- Child of periodchain to persist across periods
+
+---
+
+## RnwMerchant
+
+RaiseNow payment processor merchant account. Child of periodgroup.
+
+**Object Type**: `rnwmerchant`
+**Parent**: `periodgroup`
+**Children**: rnwform
+**Links**: none
+
+**Properties** (from data model):
+- `title` [text] - Merchant name
+- `approved` [bool] - Approval status
+- `iban` [text] - Bank account IBAN
+- `billingaddress` [text] - Billing address line 1
+- `billingaddress2` [text] - Billing address line 2
+- `billingpostalcode` [text] - Postal code
+- `billingcity` [text] - City
+- `billingcountry` [text] - Country
+- `email` [text] - Contact email
+- `firstname` [text] - Contact first name
+- `lastname` [text] - Contact last name
+- `merchantid` [text] - RaiseNow merchant ID
+- `apikey` [text] - RaiseNow API key
+- `widgetkey` [text] - Widget integration key
+
+**Relationship Notes**:
+- Contains rnwform children for payment forms
+- Manages RaiseNow payment processor integration
+
+---
+
+## RnwForm
+
+RaiseNow payment form configuration. Child of rnwmerchant.
+
+**Object Type**: `rnwform`
+**Parent**: `rnwmerchant`
+**Children**: none
+**Links**: payment, email
+
+**Properties** (from data model):
+- `title` [text] - Form name
+- `sendaddress` [bool] - Whether to collect address
+- `description` [longtext] - Form description
+- `formtype` [enum] - Form type (donation, membership, etc.)
+- `amounttype` [enum] - Amount type (fixed, variable, etc.)
+
+**Relationship Notes**:
+- Links to payment records created via this form
+- Can link to email templates for confirmations
+- Used for online payment collection
 
 ---
 

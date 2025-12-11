@@ -1,13 +1,26 @@
 # Articles API Reference
 
-> **Data Model Reference**: See `webling_data_graphviz.txt` for complete article object definitions including article and articlegroup.
+## Data Model Overview
 
-## Article Object Hierarchy
+This document covers article/inventory management in Webling. The article system allows tracking of physical items, merchandise, or products with pricing and stock levels.
+
+### Complete Object Hierarchy
 
 ```
-articlegroup (hierarchy)
+articlegroup (simple hierarchy)
   └── article
 ```
+
+### Object Relationships Summary
+
+| Object | Parent | Children | Links To |
+|--------|--------|----------|----------|
+| **article** | articlegroup | none | none |
+| **articlegroup** | none (root) | article | none |
+
+> **Note**: Articlegroups do not have parent-child relationships with each other (non-hierarchical).
+
+> **Note**: For complex queries involving multiple object relationships, refer to `full-object-relations.md`
 
 ## Article
 

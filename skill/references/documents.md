@@ -1,13 +1,25 @@
 # Documents API Reference
 
-> **Data Model Reference**: See `webling_data_graphviz.txt` for complete document object definitions including document and documentgroup.
+## Data Model Overview
 
-## Document Object Hierarchy
+This document covers document storage and organization in Webling. The document system provides hierarchical file storage with folders (documentgroups) and files (documents).
+
+### Complete Object Hierarchy
 
 ```
-documentgroup (hierarchy, can be nested)
-  └── document
+documentgroup (self-referencing hierarchy)
+  ├── document (files)
+  └── documentgroup (subfolders)
 ```
+
+### Object Relationships Summary
+
+| Object | Parent | Children | Links To |
+|--------|--------|----------|----------|
+| **document** | documentgroup | none | none |
+| **documentgroup** | documentgroup (self) | document, documentgroup | usergroup, user, page |
+
+> **Note**: For complex queries involving multiple object relationships, refer to `full-object-relations.md`
 
 ## Document
 

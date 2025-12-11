@@ -1,17 +1,29 @@
 # Admin API Reference
 
-> **Data Model Reference**: See `webling_data_graphviz.txt` for complete admin object definitions including user, usergroup, and apikey.
+## Data Model Overview
+
+This document covers user management and API access control in Webling. Admin endpoints allow managing users, user roles/permissions, and API keys.
 
 **Note**: Only administrators have access to `/user`, `/usergroup`, and `/apikey` endpoints.
 
-## Admin Object Hierarchy
+### Complete Object Hierarchy
 
 ```
-usergroup (hierarchy, defines roles)
+usergroup (defines roles/permissions)
   └── user
 
-apikey (standalone, no hierarchy)
+apikey (standalone, no parent-child hierarchy)
 ```
+
+### Object Relationships Summary
+
+| Object | Parent | Children | Links To |
+|--------|--------|----------|----------|
+| **user** | usergroup | none | comment, post, letter (as sender/owner), email (as sender/owner) |
+| **usergroup** | none (root) | user | none |
+| **apikey** | none (standalone) | none | none |
+
+> **Note**: For complex queries involving multiple object relationships, refer to `full-object-relations.md`
 
 ## User
 

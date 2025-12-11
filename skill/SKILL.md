@@ -21,7 +21,11 @@ Generate API keys in Administration > API.
 
 ## Data Model Overview
 
-Webling uses a graph-based data model with hierarchical relationships (parents/children) and cross-references (links). The complete data model with all object types, properties, and relationships is available in `webling_data_graphviz.txt`.
+Webling uses a graph-based data model with hierarchical relationships (parents/children) and cross-references (links).
+
+**Data Model Resources**:
+- **[full-object-relations.md](references/full-object-relations.md)** - Complete reference guide for ALL object relationships, navigation patterns, and complex queries
+- `webling_data_graphviz.txt` - Complete technical data model (all properties and relationships)
 
 **Key Concepts**:
 - **Parents**: Hierarchical containment (e.g., member belongs to membergroup)
@@ -30,10 +34,13 @@ Webling uses a graph-based data model with hierarchical relationships (parents/c
 - All objects have metadata (created, lastmodified, createuser, lastmodifieduser)
 - Many objects can be readonly (system-managed or template-based)
 
+> **For Complex Queries**: When working with queries that involve multiple related objects (e.g., members with invoices and payments, events with participants, accounting entries with accounts), consult [full-object-relations.md](references/full-object-relations.md) for navigation patterns and best practices.
+
 ## Quick Reference
 
 | Category | Reference File | Key Endpoints |
 |----------|----------------|---------------|
+| **Object Relations** | **[full-object-relations.md](references/full-object-relations.md)** | **All objects with complete parent/child/link mappings** |
 | Members | [members.md](references/members.md) | `/member`, `/membergroup` |
 | Finance | [finance.md](references/finance.md) | `/debitor`, `/entry`, `/account`, `/period` |
 | Documents | [documents.md](references/documents.md) | `/document`, `/documentgroup` |
@@ -183,6 +190,8 @@ Best for fetching large numbers of objects. Returns complete objects for all mat
 ## Navigating Relationships
 
 **CRITICAL: Relationships are returned as IDs, not full objects.**
+
+> **Comprehensive Guide**: For complete object relationship mappings, navigation patterns, and complex query examples, see [full-object-relations.md](references/full-object-relations.md)
 
 When you fetch a member with `format=full`, you get:
 ```json

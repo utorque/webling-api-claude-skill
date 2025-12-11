@@ -1,21 +1,41 @@
 # Members API Reference
 
-> **Data Model Reference**: See `webling_data_graphviz.txt` for complete member object definitions including member, membergroup, memberform, presencelist, attendee, participant, and calendar.
+## Data Model Overview
 
-## Member Object Hierarchy
+This document covers all member-related objects in Webling. The member system includes hierarchical groups, members themselves, signup forms, attendance tracking, and calendar integration.
+
+### Complete Object Hierarchy
 
 ```
-membergroup (hierarchy)
+membergroup (self-referencing hierarchy)
   ├── member
   ├── memberform (signup forms)
-  └── presencelist
-        └── attendee → links to member
+  ├── membergroup (subgroups)
+  └── presencelist (attendance lists, optional parent)
 
-calendar → links to membergroup
+calendar (root object)
   └── calendarevent
         ├── participant → links to member
-        └── presencelist
+        └── presencelist (linked)
+
+presencelist (can exist independently or be linked)
+  └── attendee → links to member
 ```
+
+### Object Relationships Summary
+
+| Object | Parent | Children | Links To |
+|--------|--------|----------|----------|
+| **member** | membergroup | none | comment, email, debitor, emailsent, letter, letterpdf, attendee, participant, postcomment, emotion |
+| **membergroup** | membergroup (self) | member, memberform, membergroup, presencelist | presencelist, calendar, page |
+| **memberform** | membergroup | none | file |
+| **presencelist** | membergroup (optional) | attendee | membergroup, calendarevent |
+| **attendee** | presencelist | none | member |
+| **calendar** | none (root) | calendarevent | membergroup |
+| **calendarevent** | calendar | participant | presencelist, file |
+| **participant** | calendarevent | none | member |
+
+> **Note**: For complex queries involving multiple object relationships, refer to `full-object-relations.md`
 
 ## Member
 
@@ -288,6 +308,174 @@ DELETE /membergroup/{id}
 ```
 
 **Response 204**: No content
+
+---
+
+## Memberform
+
+Signup forms for collecting new member information.
+
+**Object Type**: `memberform`
+**Parent**: `membergroup`
+**Children**: none
+**Links**: file
+
+**Properties** (from data model):
+- `title` [text] - Form name
+- `hash` [text] - Public access hash
+- `fields` [json] - Form field configuration
+- `notificationEmail` [text] - Email for notifications
+- `confirmationHtml` [longtext] - Confirmation page HTML
+- `submitButtonText` [text] - Submit button text
+- `maxSignups` [int] - Maximum number of signups
+- `maxSignupsText` [longtext] - Text shown when max reached
+- `confirmationEmailEnabled` [bool] - Whether to send confirmation emails
+- `confirmationEmailField` [int] - Field ID for email address
+- `confirmationEmailReplyto` [text] - Reply-to address
+- `confirmationEmailSubject` [text] - Email subject
+- `confirmationEmailText` [longtext] - Email body text
+- `descriptionHtml` [longtext] - Form description
+- `privacyCheckboxEnabled` [bool] - Require privacy checkbox
+- `privacyCheckboxHtml` [longtext] - Privacy checkbox text
+- `color` [text] - Form theme color
+
+---
+
+## Presencelist
+
+Attendance tracking for events or groups.
+
+**Object Type**: `presencelist`
+**Parent**: `membergroup` (optional - can also be created independently)
+**Children**: attendee
+**Links**: membergroup, calendarevent
+
+**Properties** (from data model):
+- `title` [text] - List name
+- `from` [timestamp] - Start date/time
+- `archived` [bool] - Whether list is archived
+
+**Relationship Notes**:
+- Can be child of membergroup OR linked to membergroup
+- Can be linked to calendarevent for event attendance
+- Contains attendee objects that link to members
+
+---
+
+## Attendee
+
+Individual attendance record linking members to presence lists.
+
+**Object Type**: `attendee`
+**Parent**: `presencelist`
+**Children**: none
+**Links**: member
+
+**Properties** (from data model):
+- `state` [enum] - Attendance state (e.g., present, absent, excused)
+
+**Usage Pattern**:
+```python
+# Get attendance for a specific presence list
+attendees = fetch("/attendee", filter=f'$parents.$id = {presencelist_id}')
+
+# Get member details for attendees
+member_ids = [a["links"]["member"][0] for a in attendees if a.get("links", {}).get("member")]
+members = fetch("/member", filter=f'$id IN ({",".join(map(str, member_ids))})')
+```
+
+---
+
+## Calendar
+
+Calendar container for events.
+
+**Object Type**: `calendar`
+**Parent**: none (root object)
+**Children**: calendarevent
+**Links**: membergroup
+
+**Properties** (from data model):
+- `title` [text] - Calendar name
+- `color` [text] - Calendar color (hex code)
+- `isPublic` [bool] - Whether calendar is public
+- `publicHash` [text] - Public access hash
+- `icsHash` [text] - ICS feed hash
+
+**Relationship Notes**:
+- Links to membergroup to associate calendar with a group
+- Contains calendar events as children
+
+---
+
+## Calendarevent
+
+Individual calendar event with participant management.
+
+**Object Type**: `calendarevent`
+**Parent**: `calendar`
+**Children**: participant
+**Links**: presencelist, file
+
+**Properties** (from data model):
+- `title` [text] - Event name
+- `description` [longtext] - Event description
+- `place` [text] - Event location
+- `begin` [timestamp] - Start date/time
+- `end` [timestamp] - End date/time
+- `duration` [int] - Duration in minutes
+- `isAllDay` [bool] - All-day event flag
+- `isRecurring` [bool] - Recurring event flag
+- `status` [enum] - Event status (confirmed, tentative, cancelled)
+- `recurrencePattern` [text] - Recurrence rule (RFC 5545 format)
+- `enableParticipantSignup` [bool] - Allow signups
+- `enableParticipantMaybeState` [bool] - Allow "maybe" responses
+- `isSignupBinding` [bool] - Whether signup is binding
+- `maxParticipants` [int] - Maximum participants
+- `signedupParticipants` [int] - Current signup count (computed)
+- `signupAllowedUntil` [timestamp] - Signup deadline
+- `doAutoAcceptParticipants` [bool] - Auto-accept signups
+- `questionSchema` [json] - Additional signup questions
+- `showParticipationsInPortal` [bool] - Show in member portal
+- `showAllAnswersInPortal` [bool] - Show all answers publicly
+
+**Relationship Notes**:
+- Can link to presencelist for attendance tracking
+- Contains participant objects for signup management
+- Can link to file for attachments
+
+---
+
+## Participant
+
+Event participant (signup) linking members to calendar events.
+
+**Object Type**: `participant`
+**Parent**: `calendarevent`
+**Children**: none
+**Links**: member
+
+**Properties** (from data model):
+- `state` [enum] - Participation state (accepted, declined, maybe)
+- `accepted` [bool] - Whether participation is accepted
+- `acceptedAt` [timestamp] - Acceptance timestamp
+- `invitedAt` [timestamp] - Invitation timestamp
+- `questions` [json] - Answers to signup questions
+- `memberlabel` [text] - Cached member name
+- `memberimage` [image] - Cached member image
+
+**Usage Pattern**:
+```python
+# Get participants for an event
+participants = fetch("/participant", filter=f'$parents.$id = {event_id}')
+
+# Get member details
+member_ids = [p["links"]["member"][0] for p in participants if p.get("links", {}).get("member")]
+members = fetch("/member", filter=f'$id IN ({",".join(map(str, member_ids))})')
+
+# Filter accepted participants
+accepted = [p for p in participants if p["properties"].get("state") == "accepted"]
+```
 
 ---
 
