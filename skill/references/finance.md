@@ -585,3 +585,96 @@ DELETE /costcenter/{id}
 # Entries with costcenter
 /entry?filter=$links.costcenter.$id = 3598
 ```
+
+## Practical Pattern: Members with Unpaid Invoices
+
+**Problem**: Get members with their unpaid invoices including full details.
+
+**⚠️ Important**: The filter `$links.debitor.state = "open"` finds the right members, but responses only contain debitor IDs, not full debitor data.
+
+**Correct Approach**:
+
+```python
+import requests
+
+BASE_URL = "https://yourdomain.webling.ch/api/1"
+API_KEY = "your_api_key"
+
+def fetch(endpoint, filter=None):
+    params = {"apikey": API_KEY, "format": "full"}
+    if filter:
+        params["filter"] = filter
+    response = requests.get(f"{BASE_URL}{endpoint}", params=params)
+    response.raise_for_status()
+    return response.json()
+
+# Step 1: Fetch members who have open debitors
+members = fetch("/member", filter='$links.debitor.state = "open"')
+
+# Step 2: Fetch all open debitors separately
+debitors = fetch("/debitor", filter='state = "open"')
+
+# Step 3: Create lookup dictionary
+debitors_dict = {d["id"]: d for d in debitors}
+
+# Step 4: Enrich members with full debitor data
+for member in members:
+    debitor_ids = member.get("links", {}).get("debitor", [])
+    member["unpaid_invoices"] = [
+        debitors_dict[did]
+        for did in debitor_ids
+        if did in debitors_dict
+    ]
+    member["total_unpaid"] = sum(
+        d.get("properties", {}).get("remainingamount", 0)
+        for d in member["unpaid_invoices"]
+    )
+
+# Now you have complete data
+for member in members:
+    props = member["properties"]
+    print(f"{props.get('Vorname')} {props.get('Name')}")
+    print(f"  Total unpaid: CHF {member['total_unpaid']:.2f}")
+    for invoice in member["unpaid_invoices"]:
+        inv_props = invoice["properties"]
+        print(f"  - Invoice {invoice['id']}: CHF {inv_props.get('remainingamount', 0):.2f}")
+```
+
+## Practical Pattern: Financial Entries with Account Details
+
+**Problem**: Get all financial entries with full debit/credit account information and dates.
+
+**Correct Approach**:
+
+```python
+# Step 1: Fetch all related entity types
+entries = fetch("/entry")
+accounts = fetch("/account")
+entrygroups = fetch("/entrygroup")
+
+# Step 2: Create lookup dictionaries
+accounts_dict = {a["id"]: a for a in accounts}
+entrygroups_dict = {eg["id"]: eg for eg in entrygroups}
+
+# Step 3: Enrich entries with related data
+for entry in entries:
+    # Add parent entrygroup data (contains date)
+    entrygroup_id = entry.get("parents", [None])[0]
+    entry["entrygroup"] = entrygroups_dict.get(entrygroup_id)
+
+    # Add linked account data
+    debit_id = entry.get("links", {}).get("debit", [None])[0]
+    credit_id = entry.get("links", {}).get("credit", [None])[0]
+    entry["debit_account"] = accounts_dict.get(debit_id)
+    entry["credit_account"] = accounts_dict.get(credit_id)
+
+    # Extract commonly needed fields
+    entry["date"] = entry["entrygroup"]["properties"]["date"] if entry["entrygroup"] else None
+    entry["debit_name"] = entry["debit_account"]["properties"]["title"] if entry["debit_account"] else None
+    entry["credit_name"] = entry["credit_account"]["properties"]["title"] if entry["credit_account"] else None
+    entry["amount"] = entry.get("properties", {}).get("amount", 0)
+
+# Now you can work with complete entry data
+for entry in entries:
+    print(f"{entry['date']}: {entry['debit_name']} → {entry['credit_name']}: CHF {entry['amount']:.2f}")
+```

@@ -321,3 +321,153 @@ DELETE /membergroup/{id}
 # Search all fields
 /member?filter=* = "Müller"
 ```
+
+---
+
+## Practical Pattern: Members with Complete Contact Details
+
+**Problem**: Get all members with their full contact information and group membership.
+
+**⚠️ Important**: When fetching members with `format=full`, you get complete member data but parent group references are IDs only.
+
+**Correct Approach**:
+
+```python
+import requests
+
+BASE_URL = "https://yourdomain.webling.ch/api/1"
+API_KEY = "your_api_key"
+
+def fetch(endpoint, filter=None):
+    params = {"apikey": API_KEY, "format": "full"}
+    if filter:
+        params["filter"] = filter
+    response = requests.get(f"{BASE_URL}{endpoint}", params=params)
+    response.raise_for_status()
+    return response.json()
+
+# Step 1: Fetch all members
+members = fetch("/member")
+
+# Step 2: Fetch all membergroups to get group names
+membergroups = fetch("/membergroup")
+
+# Step 3: Create lookup dictionary for groups
+groups_dict = {g["id"]: g for g in membergroups}
+
+# Step 4: Enrich members with group information
+for member in members:
+    props = member.get("properties", {})
+    parent_ids = member.get("parents", [])
+
+    # Add group information
+    member["groups"] = [
+        {
+            "id": gid,
+            "title": groups_dict.get(gid, {}).get("properties", {}).get("title", "Unknown")
+        }
+        for gid in parent_ids
+        if gid in groups_dict
+    ]
+
+    # Format contact info
+    member["full_name"] = f"{props.get('Vorname', '')} {props.get('Name', '')}".strip()
+    member["address"] = f"{props.get('Strasse', '')}, {props.get('PLZ', '')} {props.get('Ort', '')}".strip(", ")
+
+# Now you have complete member data with group names
+for member in members:
+    print(f"{member['full_name']}")
+    print(f"  Email: {member['properties'].get('E-Mail', 'N/A')}")
+    print(f"  Phone: {member['properties'].get('Telefon', 'N/A')}")
+    print(f"  Groups: {', '.join(g['title'] for g in member['groups'])}")
+```
+
+## Practical Pattern: Members in Specific Group with Unpaid Fees
+
+**Problem**: Get members from a specific membergroup who have unpaid membership fees.
+
+**Correct Approach**:
+
+```python
+# Step 1: Fetch members in specific group with open debitors
+members = fetch("/member", filter='$parents.$id = 555 AND $links.debitor.state = "open"')
+
+# Step 2: Fetch open debitors
+debitors = fetch("/debitor", filter='state = "open"')
+
+# Step 3: Create lookup dictionary
+debitors_dict = {d["id"]: d for d in debitors}
+
+# Step 4: Enrich members with unpaid invoice details
+for member in members:
+    debitor_ids = member.get("links", {}).get("debitor", [])
+    member["unpaid_invoices"] = [
+        debitors_dict[did]
+        for did in debitor_ids
+        if did in debitors_dict
+    ]
+    member["total_unpaid"] = sum(
+        d.get("properties", {}).get("remainingamount", 0)
+        for d in member["unpaid_invoices"]
+    )
+
+# Display members with unpaid fees
+for member in members:
+    props = member["properties"]
+    print(f"{props.get('Vorname')} {props.get('Name')}")
+    print(f"  Email: {props.get('E-Mail')}")
+    print(f"  Total unpaid: CHF {member['total_unpaid']:.2f}")
+    for invoice in member["unpaid_invoices"]:
+        inv_props = invoice["properties"]
+        print(f"    - {inv_props.get('title')}: CHF {inv_props.get('remainingamount', 0):.2f}")
+```
+
+## Practical Pattern: Member Hierarchy Navigation
+
+**Problem**: Get all members across a membergroup hierarchy (including subgroups).
+
+**Correct Approach**:
+
+```python
+# Step 1: Fetch all membergroups to understand hierarchy
+membergroups = fetch("/membergroup")
+
+# Step 2: Find all subgroups under target group (e.g., group 550)
+def get_all_subgroup_ids(group_id, groups_dict):
+    """Recursively find all subgroup IDs"""
+    subgroup_ids = [group_id]
+    group = groups_dict.get(group_id)
+    if group:
+        child_group_ids = group.get("children", {}).get("membergroup", [])
+        for child_id in child_group_ids:
+            subgroup_ids.extend(get_all_subgroup_ids(child_id, groups_dict))
+    return subgroup_ids
+
+groups_dict = {g["id"]: g for g in membergroups}
+target_group_id = 550
+all_group_ids = get_all_subgroup_ids(target_group_id, groups_dict)
+
+print(f"Found {len(all_group_ids)} groups in hierarchy")
+
+# Step 3: Fetch members in any of these groups
+# Using $ancestors is easier for this use case:
+members = fetch("/member", filter=f'$ancestors.$id = {target_group_id}')
+
+print(f"Found {len(members)} members across all subgroups")
+
+# Step 4: Organize members by their direct parent group
+members_by_group = {}
+for member in members:
+    parent_id = member.get("parents", [None])[0]
+    if parent_id not in members_by_group:
+        members_by_group[parent_id] = []
+    members_by_group[parent_id].append(member)
+
+# Display by group
+for group_id, group_members in members_by_group.items():
+    group_name = groups_dict.get(group_id, {}).get("properties", {}).get("title", "Unknown")
+    print(f"\n{group_name} ({len(group_members)} members):")
+    for member in group_members:
+        props = member["properties"]
+        print(f"  - {props.get('Vorname')} {props.get('Name')}")
+```

@@ -194,6 +194,25 @@ For multi-select fields:
 ```
 
 ### Linked Objects
+
+**Important**: Filters can query nested properties, but responses only include IDs.
+
+```bash
+# ✅ Filter works - finds members with open invoices
+/member?filter=$links.debitor.state = "open"&format=full
+
+# Response includes member data + debitor IDs (not full debitor objects):
+{
+  "type": "member",
+  "properties": { "Vorname": "Fritz" },
+  "links": { "debitor": [1234] }  // ID only
+}
+
+# To get full debitor data, fetch separately:
+/debitor?filter=state = "open"&format=full
+```
+
+**Examples**:
 ```bash
 # Member linked to specific debitor
 /member?filter=$links.debitor.$id = 851
