@@ -557,6 +557,113 @@ Or use filters:
 GET /member?filter=$id IN (536, 525, 506)&format=full
 ```
 
+## Best Practices: Type Safety and Edge Cases
+
+When working with the Webling API, always account for polymorphic responses and optional data:
+
+### 1. Safe List Access
+Lists can be empty. Always check before accessing by index:
+
+```python
+# ❌ BAD - Can cause IndexError
+parent_id = obj.get("parents", [None])[0]
+
+# ✅ GOOD - Safe access
+parents = obj.get("parents", [])
+parent_id = parents[0] if parents else None
+```
+
+### 2. Type Checking Before Method Calls
+API responses can return different types (dict vs list). Always verify:
+
+```python
+# ❌ BAD - Assumes objects is always a dict
+for obj_type, ids in changes.get("objects", {}).items():
+    process(ids)
+
+# ✅ GOOD - Check type first
+objects_data = changes.get("objects", {})
+if isinstance(objects_data, dict):
+    for obj_type, ids in objects_data.items():
+        process(ids)
+elif isinstance(objects_data, list):
+    # Handle list format
+    process(objects_data)
+```
+
+### 3. Polymorphic Property Handling
+Properties can be dicts or lists depending on object type:
+
+```python
+# ❌ BAD - Assumes props is always a dict
+props = definition.get("properties", {})
+for key in props.keys():  # Fails if props is a list
+    pass
+
+# ✅ GOOD - Handle both cases
+props = definition.get("properties", {})
+if isinstance(props, dict):
+    for key, value in props.items():
+        process(key, value)
+elif isinstance(props, list):
+    for item in props:
+        process_list_item(item)
+```
+
+### 4. Validate Data Before Processing
+Not all objects have all expected fields:
+
+```python
+# ❌ BAD - Assumes structure
+apikey = apikeys_data[0]
+title = apikey.get("properties").get("title")
+
+# ✅ GOOD - Validate each step
+if apikeys_data and isinstance(apikeys_data, list):
+    for apikey in apikeys_data:
+        if not isinstance(apikey, dict):
+            continue  # Skip invalid items
+        props = apikey.get("properties", {})
+        title = props.get("title", "Unnamed")
+```
+
+### 5. Known Edge Cases
+
+**Empty Parents**: Objects like `presencelist` can exist without parents
+```python
+parents = presencelist.get("parents", [])
+parent_id = parents[0] if parents else None
+```
+
+**Polymorphic Replication**: `/changes` and `/replicate` can return:
+- Dict format: `{"member": [1, 2], "debitor": [3]}` when changes exist
+- List format: `[]` when no changes exist
+
+**Variable Properties**: `/definition` endpoint returns properties as:
+- Dict format: `{"Vorname": {...}}` for most objects
+- List format: `[...]` for some object types
+
+### 6. Always Use Try-Except for Independent Sections
+Wrap independent sections in try-except to prevent cascade failures:
+
+```python
+try:
+    # Process members section
+    members = fetch("/member")
+    process_members(members)
+except Exception as e:
+    print(f"Error in members section: {e}")
+    # Continue to next section
+
+try:
+    # Process finance section
+    debitors = fetch("/debitor")
+    process_debitors(debitors)
+except Exception as e:
+    print(f"Error in finance section: {e}")
+    # Continue anyway
+```
+
 ## Complete Data Model Reference
 
 The file `webling_data_graphviz.txt` contains the complete Webling data model in Graphviz format, showing:

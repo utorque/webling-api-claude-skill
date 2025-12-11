@@ -53,7 +53,7 @@ Returns all changed objects since the Unix timestamp.
 ```
 
 **Response fields**:
-- `objects` - Changed object IDs grouped by type
+- `objects` - Changed object IDs grouped by type (dict of lists)
 - `deleted` - Deleted object IDs (also in `objects`)
 - `context` - Reserved for future use
 - `definitions` - Types with changed field definitions
@@ -61,6 +61,22 @@ Returns all changed objects since the Unix timestamp.
 - `subscription` - `true` if `/subscription` data changed
 - `revision` - Latest revision number
 - `version` - Current Webling version
+
+**⚠️ Important - Polymorphic Response**: The `objects` and `deleted` fields can be either:
+- **Dict format**: `{"member": [1, 2], "debitor": [3]}` when changes exist
+- **List format**: `[]` when no changes exist
+
+Always check the type before processing:
+```python
+objects_data = changes.get("objects", {})
+if isinstance(objects_data, dict):
+    for obj_type, ids in objects_data.items():
+        # Process changes
+        pass
+elif isinstance(objects_data, list):
+    # Empty or alternative format
+    pass
+```
 
 **Best for**: Scheduled syncs (cron jobs) at regular intervals.
 

@@ -359,6 +359,11 @@ Attendance tracking for events or groups.
 - Can be child of membergroup OR linked to membergroup
 - Can be linked to calendarevent for event attendance
 - Contains attendee objects that link to members
+- **⚠️ Important**: `parents` array can be empty. Always check before accessing:
+  ```python
+  parents = presencelist.get("parents", [])
+  parent_id = parents[0] if parents else None
+  ```
 
 ---
 

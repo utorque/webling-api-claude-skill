@@ -85,6 +85,24 @@ Returns the field configuration of all objects.
 
 The `full` format includes internal property IDs useful for the `/object` endpoint.
 
+**⚠️ Important - Variable Property Structure**: The `properties` field can be either:
+- **Dict format**: `{"Vorname": {...}, "Name": {...}}` (most common)
+- **List format**: `[...]` (some object types)
+
+Always check the type before accessing dictionary methods:
+```python
+for obj_type, definition in definitions.items():
+    props = definition.get("properties", {})
+
+    if isinstance(props, dict):
+        # Safe to use .keys(), .values(), .items()
+        for prop_name, prop_def in props.items():
+            pass
+    elif isinstance(props, list):
+        # Handle list format
+        count = len(props)
+```
+
 ---
 
 ## Quota
