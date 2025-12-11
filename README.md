@@ -18,7 +18,30 @@ This skill enables Claude to understand and work with Webling's complete API, in
 - **Administration**: Users, roles, API keys
 - **Advanced Features**: Query language, replication/sync, data model navigation
 
-## Installation
+## Installation for Claude Code
+
+### Add the marketplace
+```bash
+/plugin marketplace add utorque/webling-api-claude-skill
+```
+
+### Install the skill
+```bash
+/plugin install webling-api@webling-api
+```
+
+Or browse and install interactively:
+```bash
+/plugin
+```
+
+### Verify Installation
+List your installed plugins:
+```bash
+/plugin list
+```
+
+## Direct Installation
 
 1. Download the latest `.skill` file from [Releases](https://github.com/utorque/webling-api-claude-skill/releases)
 2. Upload it to your Claude environment via the Skills interface
